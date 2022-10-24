@@ -1,0 +1,35 @@
+.header {
+  display: flex;
+  box-sizing: border-box;
+  padding-right: 22px;
+  padding-left: 22px;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 80px;
+  background-color: #FFFFFF;
+
+  &__text {
+    display: inline-block;
+    margin-right: 30px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 28px;
+  }
+
+  &__authorization button {
+    height: 51px;
+    width: 109px;
+    border: none;
+    background-color: #FFFFFF;
+  }
+
+  &__authorization &__button--active {
+    border-radius: 5px;
+    border: 1px solid #52C41A;
+    color: #52C41A;
+
+  }
+}
