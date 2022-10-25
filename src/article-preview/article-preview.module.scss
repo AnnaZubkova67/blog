@@ -1,8 +1,8 @@
 .article-preview {
   display: flex;
   justify-content: space-between;
-  height: 140px;
-  width: 941px;
+  min-height: 140px;
+  max-width: 941px;
   margin-top: 26px;
   padding: 15px 19px 24px 19px;
   border-radius: 5px;
@@ -35,11 +35,16 @@
     justify-content: space-evenly;
   }
 
+  &__tags {
+    display: flex;
+  }
+
   &__tag {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 38px;
+    min-width: 38px;
+    margin-right: 5px;
     height: 20px;
     border: 1px solid rgba(0, 0, 0, 0.5);
     border-radius: 2px;
@@ -55,6 +60,13 @@
   &__profile {
     display: flex;
     align-items: flex-start;
+    
+    @media (max-width: 375px) {
+      flex-direction: column-reverse;
+      align-items: center;
+      justify-content: center;
+      
+    }
   }
 
   &__user-name {
@@ -63,6 +75,10 @@
     font-weight: 400;
     font-size: 18px;
     line-height: 28px;
+    @media (max-width: 375px) {
+      text-align: center;
+
+    }
   }
   &__user-img {
     margin-left: 12px;
@@ -78,6 +94,10 @@
     font-size: 12px;
     line-height: 22px;
     color: rgba(0, 0, 0, 0.5);
+    @media (max-width: 375px) {
+      text-align: center;
+
+    }
   }
 
   &__like {

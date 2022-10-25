@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { format } from 'date-fns';
 
 import { fetchArticle } from '../store/articleSlice';
 
@@ -28,16 +29,20 @@ function Article() {
                 12
               </div>
             </title>
-            <button type="button" className={styles.article__tag}>
-              Tag1
-            </button>
+            <ul className={styles['article-preview__tags']}>
+              {article.tagList.map((elem) => (
+                <button type="button" className={styles['article-preview__tag']} key={Math.random()}>
+                  {elem}
+                </button>
+              ))}
+            </ul>
             <p className={styles.article__text}>{article.description}</p>
             <p className={styles.article__body}>{article.body}</p>
           </div>
           <div className={styles.article__profile}>
             <div>
               <p className={styles['article__user-name']}>{article.author.username}</p>
-              <p className={styles.article__date}>March 5, 2020 </p>
+              <p className={styles.article__date}>{format(new Date(article.createdAt), 'MMMM d, y')}</p>
             </div>
             <img src={article.author.image} alt="user img" className={styles['article__user-img']} />
           </div>

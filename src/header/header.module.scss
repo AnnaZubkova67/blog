@@ -1,7 +1,6 @@
 .header {
   display: flex;
   box-sizing: border-box;
-  padding-right: 22px;
   padding-left: 22px;
   justify-content: space-between;
   align-items: center;
@@ -9,14 +8,62 @@
   height: 80px;
   background-color: #FFFFFF;
 
-  &__text {
+  @media (max-width: 390px) {
+    padding-left: 12px;
+  }
+
+
+  &__user {
+    margin-right: 27px;
+    @media (max-width: 640px) {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      justify-content: center;
+    }
+
+  }
+
+  &__user &__text {
+    margin-right: 10px;
+    @media (max-width: 640px) {
+      display: none;
+    }
+  }
+
+  &__text,
+  &__log-out,
+  &__button--active{
     display: inline-block;
     margin-right: 30px;
-    font-family: 'Inter';
     font-style: normal;
-    font-weight: 400;
     font-size: 18px;
     line-height: 28px;
+    padding: 6px;
+    color: rgba(0, 0, 0, 0.85);
+
+    @media (max-width: 640px) {
+      font-size: 14px;
+      padding: 2px;
+      margin-right: 15px;
+    }
+  }
+
+  &__log-out{
+    border: 1px solid rgba(0, 0, 0, 0.75);
+    border-radius: 5px;
+    @media (max-width: 640px) {
+      border: none;
+      font-weight: 700;
+      color: #b21722;
+    }
+  }
+
+  &__authorization {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
   }
 
   &__authorization button {
@@ -26,10 +73,16 @@
     background-color: #FFFFFF;
   }
 
-  &__authorization &__button--active {
+   &__button--active,
+   &__text:hover{
     border-radius: 5px;
     border: 1px solid #52C41A;
-    color: #52C41A;
+    color: #52C41A !important;
+
+     @media (max-width: 640px) {
+       border: none;
+       font-weight: 700;
+     }
 
   }
 }

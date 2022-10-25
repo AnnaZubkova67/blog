@@ -1,6 +1,10 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import classnames from 'classnames';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+
+import { postSignUp } from '../store/authorizationSlice';
 
 import style from './sign-up.module.scss';
 
@@ -14,7 +18,18 @@ function SignUp() {
     mode: 'onBlur',
   });
 
-  const onSubmit = () => {};
+  const dispatch = useDispatch();
+  const navigation = useNavigate();
+
+  const watchPassword = watch('password');
+
+  const onSubmit = async (data) => {
+    delete data.repeatPassword;
+    const user = await dispatch(postSignUp(data));
+    if (user.meta.requestStatus === 'fulfilled') {
+      navigation('/articles');
+    }
+  };
 
   return (
     <div className={style['sign-up']}>
@@ -78,7 +93,7 @@ function SignUp() {
           className={classnames(style['sign-up__input'], { [style['sign-up__input--error']]: errors.repeatPassword })}
           {...register('repeatPassword', {
             required: true,
-            validate: (value) => value === watch('password'),
+            validate: (value) => value === watchPassword,
           })}
         />
         <div className={style['sign-up__error']}>
@@ -98,7 +113,7 @@ function SignUp() {
       </form>
 
       <p className={style['sign-up__sign-in']}>
-        Already have an account? <p>Sign In</p>.
+        Already have an account? <Link to="/sign-in">Sign In</Link>.
       </p>
     </div>
   );

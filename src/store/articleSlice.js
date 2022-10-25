@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-export const fetchArticle = createAsyncThunk('ticket/fetchTicket', async (id, { rejectWithValue }) => {
+export const fetchArticle = createAsyncThunk('article/fetchArticle', async (id, { rejectWithValue }) => {
   try {
     let res = await fetch(`https://blog.kata.academy/api/articles/${id}`);
     if (!res.ok) {
@@ -17,7 +17,7 @@ const articleSlice = createSlice({
   name: 'article',
   initialState: {
     status: null,
-    error: null,
+    error: false,
     article: null,
   },
   reducers: {},

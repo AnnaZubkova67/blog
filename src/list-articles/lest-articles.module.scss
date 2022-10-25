@@ -1,11 +1,8 @@
 .list {
-  display: flex;
-  justify-content: space-evenly;
-  flex-direction: column;
-  width: 941px;
-  margin: 0;
 
   &__pagination {
+    display: flex;
+    justify-content: center;
     margin-top: 27px !important;
     margin-bottom: 18px !important;
   }

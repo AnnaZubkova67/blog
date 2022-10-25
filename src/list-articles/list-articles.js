@@ -15,21 +15,22 @@ function ListArticles() {
 
   useEffect(() => {
     dispatch(fetchArticleList(pagination));
-  }, []);
+  }, [pagination]);
 
   return (
     <>
       <ul className={styles.list}>
         {articleList
           ? articleList.map((elem) => {
-              const { author, createdAt, title, description, slug } = elem;
+              const { author, title, description, slug, tagList, createdAt } = elem;
               return (
                 <ArticlePreview
                   author={author}
-                  createdAt={createdAt}
                   title={title}
                   description={description}
                   slug={slug}
+                  tagList={tagList}
+                  createdAt={createdAt}
                   key={Math.random()}
                 />
               );
