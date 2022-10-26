@@ -19,8 +19,13 @@ const articleSlice = createSlice({
     status: null,
     error: false,
     article: null,
+    tagList: [],
   },
-  reducers: {},
+  reducers: {
+    addTag: (state, action) => {
+      state.tagList.push(action.payload.name);
+    },
+  },
   extraReducers: {
     [fetchArticle.pending]: (state) => {
       state.status = 'loading';
@@ -38,5 +43,7 @@ const articleSlice = createSlice({
     },
   },
 });
+
+export const { addTag } = articleSlice.actions;
 
 export default articleSlice.reducer;

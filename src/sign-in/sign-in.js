@@ -1,7 +1,10 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import classnames from 'classnames';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+
+import { postSignIn } from '../store/authorizationSlice';
 
 import style from './sign-in.module.scss';
 
@@ -14,7 +17,15 @@ function SignIn() {
     mode: 'onBlur',
   });
 
-  const onSubmit = () => {};
+  const dispatch = useDispatch();
+  const navigation = useNavigate();
+
+  const onSubmit = async (data) => {
+    const user = await dispatch(postSignIn(data));
+    if (user.meta.requestStatus === 'fulfilled') {
+      navigation('/articles');
+    }
+  };
 
   return (
     <div className={style['sign-in']}>
