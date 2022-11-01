@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import classnames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin, Alert } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
-import { addTag } from '../store/articleSlice';
+import { postArticle, putEditArticle, addTag, deleteTag } from '../store/articleSlice';
 
 import style from './create-article.module.scss';
 
@@ -12,28 +15,79 @@ function CreateArticle() {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm({
     mode: 'onBlur',
   });
-  const { tagList } = useSelector((state) => state.article);
+
+  const { tagList, activeCreate, status } = useSelector((state) => state.article);
+  const { token } = useSelector((state) => state.authorization);
   const [tagName, setTagName] = useState('');
+  const { idArticle } = useSelector((state) => state.articleList);
+  const [create, setCreate] = useState(false);
+  const [edit, setEdit] = useState(false);
   const dispatch = useDispatch();
+  const navigation = useNavigate();
 
   const clickAddTag = () => {
     dispatch(addTag({ name: tagName }));
     setTagName('');
   };
 
-  const onSubmit = () => {};
-  return (
+  const onSubmit = async (data) => {
+    data.tagList = tagList;
+    if (activeCreate) {
+      await dispatch(postArticle({ id: token, body: data }));
+      reset();
+      setCreate(true);
+      setTimeout(() => setCreate(false), 2000);
+    } else {
+      await dispatch(putEditArticle({ id: token, body: data, slug: idArticle }));
+      setEdit(true);
+      setTimeout(() => navigation('/articles'), 2000);
+    }
+  };
+
+  const { fullArticle } = useSelector((state) => state.article);
+
+  useEffect(() => {
+    if (activeCreate) {
+      reset();
+    }
+  }, [activeCreate]);
+
+  const antIcon = (
+    <LoadingOutlined
+      style={{
+        fontSize: 24,
+        color: 'white',
+      }}
+      spin
+    />
+  );
+
+  const creationSuccess = (
+    <Alert message="Статья успешно добавлена" type="success" className={style['create-article__alert']} />
+  );
+  const editSuccess = (
+    <Alert
+      message="Успех!"
+      description="Статья успешно изменена"
+      type="success"
+      showIcon
+      className={style['create-article__alert']}
+    />
+  );
+  const content = (
     <div className={style['create-article']}>
-      <title className={style['create-article__title']}>Create new article</title>
+      <title className={style['create-article__title']}>{activeCreate ? 'Create new article' : 'Edit article'}</title>
       <form onSubmit={handleSubmit(onSubmit)} className={style['create-article__form']}>
         <label htmlFor="title">Title</label>
         <input
           id="title"
           type="text"
           placeholder="Title"
+          defaultValue={activeCreate ? '' : fullArticle.title}
           className={classnames(style['create-article__input'], {
             [style['create-article__input--error']]: errors.title,
           })}
@@ -47,6 +101,7 @@ function CreateArticle() {
           id="short-description"
           type="text"
           placeholder="Short description"
+          defaultValue={activeCreate ? '' : fullArticle.description}
           className={classnames(style['create-article__input'], {
             [style['create-article__input--error']]: errors.description,
           })}
@@ -57,11 +112,12 @@ function CreateArticle() {
         <div className={style['create-article__error']}>
           {errors.description ? <p>Поле не должно быть пустым</p> : null}
         </div>
-        <label htmlFor="text">Tags</label>
+        <label htmlFor="text">Text</label>
         <textarea
           id="text"
           placeholder="Text"
           rows="10"
+          defaultValue={activeCreate ? '' : fullArticle.body}
           className={classnames(style['create-article__input'], {
             [style['create-article__input--error']]: errors.text,
           })}
@@ -70,7 +126,7 @@ function CreateArticle() {
           })}
         />
         <div className={style['create-article__error']}>{errors.text ? <p>{errors.text.message}</p> : null}</div>
-        <label htmlFor="tags">Tags</label>
+        <div>Tags</div>
         {tagList.map((elem) => (
           <div className={style['create-article__tags']} key={Math.random()}>
             <input
@@ -80,12 +136,16 @@ function CreateArticle() {
               className={style['create-article__tag']}
               defaultValue={elem}
             />
-            <button type="button" className={style['create-article__delete-tag']}>
+            <button
+              type="button"
+              className={style['create-article__delete-tag']}
+              onClick={() => dispatch(deleteTag({ tag: elem }))}
+            >
               Delete
             </button>
           </div>
         ))}
-        <div className={style['create-article__tags']} key={Math.random()}>
+        <label htmlFor="tags" className={style['create-article__tags']}>
           <input
             id="tags"
             placeholder="Tag"
@@ -94,16 +154,29 @@ function CreateArticle() {
             value={tagName}
             onChange={(e) => setTagName(e.target.value)}
           />
-          <button type="button" className={style['create-article__delete-tag']}>
+          <button type="button" className={style['create-article__delete-tag']} onClick={() => setTagName('')}>
             Delete
           </button>
           <button type="button" className={style['create-article__add-tag']} onClick={clickAddTag}>
             Add tag
           </button>
-        </div>
-        <input type="submit" className={style['create-article__send']} value="Send" />
+        </label>
+        <button
+          type="submit"
+          className={style['create-article__send']}
+          disabled={status === 'loading'}
+          onClick={() => window.scroll(0, 0)}
+        >
+          {status === 'loading' ? <Spin indicator={antIcon} /> : 'Send'}
+        </button>
       </form>
     </div>
+  );
+  return (
+    <>
+      {create ? creationSuccess : null}
+      {edit ? editSuccess : content}
+    </>
   );
 }
 

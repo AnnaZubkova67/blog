@@ -73,6 +73,10 @@
     color: #FFFFFF;
   }
 
+  &__alert {
+    margin-top: 15px;
+  }
+
   &__tag {
    width: 300px;
   }
@@ -80,7 +84,8 @@
   &__tags {
     max-width: 590px;
     display: flex;
-    justify-content: space-between;
+    margin: 5px;
+    justify-content: flex-start;
   }
 
   &__delete-tag,
@@ -88,6 +93,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-left: 15px;
     padding: 8px 16px 8px 16px;
     background-color: #FFFFFF;
     width: 120px;

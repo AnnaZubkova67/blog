@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
+import { NavLink } from 'react-router-dom';
 
-import { fetchArticle } from '../store/articleSlice';
+import { createArticle, fetchArticle, deleteArticle } from '../store/articleSlice';
 
 import styles from './article.module.scss';
 import likeImg from './heart.svg';
@@ -12,9 +13,30 @@ function Article() {
   const { idArticle } = useSelector((state) => state.articleList);
 
   useEffect(() => {
-    dispatch(fetchArticle(idArticle));
-  }, [idArticle]);
+    dispatch(fetchArticle(JSON.parse(localStorage.getItem('idArticle'))));
+  }, []);
   const { article } = useSelector((state) => state.article);
+  const { username } = useSelector((state) => state.authorization);
+  const { token } = useSelector((state) => state.authorization);
+
+  const control = (
+    <div className={styles.article__buttons}>
+      <button
+        type="button"
+        className={styles['article__button-delete']}
+        onClick={() => dispatch(deleteArticle({ id: token, slug: idArticle }))}
+      >
+        Delete
+      </button>
+      <NavLink
+        to={`/articles/${idArticle}/edit`}
+        className={styles['article__button-edit']}
+        onClick={() => dispatch(createArticle({ event: 'edit' }))}
+      >
+        Edit
+      </NavLink>
+    </div>
+  );
 
   // eslint-disable-next-line consistent-return
   const articleContent = () => {
@@ -40,11 +62,14 @@ function Article() {
             <p className={styles.article__body}>{article.body}</p>
           </div>
           <div className={styles.article__profile}>
-            <div>
-              <p className={styles['article__user-name']}>{article.author.username}</p>
-              <p className={styles.article__date}>{format(new Date(article.createdAt), 'MMMM d, y')}</p>
+            <div className={styles.article__info}>
+              <div>
+                <p className={styles['article__user-name']}>{article.author.username}</p>
+                <p className={styles.article__date}>{format(new Date(article.createdAt), 'MMMM d, y')}</p>
+              </div>
+              <img src={article.author.image} alt="user img" className={styles['article__user-img']} />
             </div>
-            <img src={article.author.image} alt="user img" className={styles['article__user-img']} />
+            {username === article.author.username ? control : null}
           </div>
         </li>
       );

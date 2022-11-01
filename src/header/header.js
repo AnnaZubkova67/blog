@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { logOut } from '../store/authorizationSlice';
+import { createArticle } from '../store/articleSlice';
 
 import styles from './header.module.scss';
 import userImg from './user-img.svg';
@@ -33,7 +34,7 @@ function Header() {
 
   const authorized = (
     <div className={styles.header__authorization}>
-      <NavLink to="/new-article" className={setActive}>
+      <NavLink to="/new-article" className={setActive} onClick={() => dispatch(createArticle({ event: 'create' }))}>
         Create article
       </NavLink>
       <NavLink to="/profile" className={styles.header__user}>

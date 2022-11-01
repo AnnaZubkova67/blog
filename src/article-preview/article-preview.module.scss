@@ -1,22 +1,36 @@
-.article-preview {
+.article {
   display: flex;
   justify-content: space-between;
-  min-height: 140px;
+  min-height: 870px;
   max-width: 941px;
   margin-top: 26px;
+  margin-bottom: 60px;
   padding: 15px 19px 24px 19px;
   border-radius: 5px;
   background-color: #FFFFFF;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
 
+  &__info {
+    display: flex;
+    flex-direction: row;
+  }
+
+  &__preview-article {
+    min-height: 140px;
+    max-width: 941px;
+    margin-bottom: 0;
+  }
+
   &__text {
+    display: flex;
+    justify-content: space-between;
     max-width: 682px;
     font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
     line-height: 22px;
-    color: rgba(0, 0, 0, 0.75);
+    color: rgba(0, 0, 0, 0.5);
   }
 
   &__title {
@@ -32,11 +46,7 @@
   &__description {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-  }
-
-  &__tags {
-    display: flex;
+    justify-content: flex-start;
   }
 
   &__tag {
@@ -44,7 +54,6 @@
     justify-content: center;
     align-items: center;
     min-width: 38px;
-    margin-right: 5px;
     height: 20px;
     border: 1px solid rgba(0, 0, 0, 0.5);
     border-radius: 2px;
@@ -57,15 +66,47 @@
 
   }
 
+  &__button-delete,
+  &__button-edit{
+    box-sizing: border-box;
+    background-color: #FFFFFF;
+    width: 78px;
+    height: 31.1px;
+    border-radius: 5px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__button-delete{
+    color: #F5222D;
+    border: 1px solid #F5222D;
+  }
+
+  &__buttons {
+    display: flex;
+    flex-direction: row;
+  }
+
+  &__button-edit{
+    color: #52C41A;
+    border: 1px solid #52C41A;
+    margin-left: 12px;
+  }
+
   &__profile {
     display: flex;
     align-items: flex-start;
-    
     @media (max-width: 375px) {
       flex-direction: column-reverse;
       align-items: center;
       justify-content: center;
-      
+
     }
   }
 
@@ -116,6 +157,29 @@
     margin-right: 5px;
 
   }
+
+  &__body {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  &__full-article-profile{
+    flex-direction: column;
+    @media (max-width: 375px) {
+      justify-content: flex-end;
+
+    }
+  }
+
+
+
+  &__my-article{
+    border: 2px solid #52C41A;
+  }
+
 
 
 }

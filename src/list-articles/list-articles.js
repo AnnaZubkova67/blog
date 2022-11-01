@@ -20,22 +20,7 @@ function ListArticles() {
   return (
     <>
       <ul className={styles.list}>
-        {articleList
-          ? articleList.map((elem) => {
-              const { author, title, description, slug, tagList, createdAt } = elem;
-              return (
-                <ArticlePreview
-                  author={author}
-                  title={title}
-                  description={description}
-                  slug={slug}
-                  tagList={tagList}
-                  createdAt={createdAt}
-                  key={Math.random()}
-                />
-              );
-            })
-          : null}
+        {articleList ? articleList.map((elem) => <ArticlePreview elem={elem} key={Math.random()} />) : null}
       </ul>
       <Pagination
         defaultPageSize={20}
