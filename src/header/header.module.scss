@@ -38,7 +38,7 @@
   }
 
   &__text,
-  &__log-out,
+  &__authorization &__log-out,
   &__button--active{
     display: inline-block;
     margin-right: 30px;
@@ -55,9 +55,10 @@
     }
   }
 
-  &__log-out{
+  &__authorization &__log-out{
     border: 1px solid rgba(0, 0, 0, 0.75);
     border-radius: 5px;
+    margin-right: 22px;
     @media (max-width: 640px) {
       border: none;
       font-weight: 700;
@@ -77,6 +78,9 @@
     width: 109px;
     border: none;
     background-color: #FFFFFF;
+    @media (max-width: 640px) {
+      width: auto;
+    }
   }
 
    &__button--active,

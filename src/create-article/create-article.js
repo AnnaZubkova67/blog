@@ -11,6 +11,16 @@ import { postArticle, putEditArticle, addTag, deleteTag } from '../store/article
 import style from './create-article.module.scss';
 
 function CreateArticle() {
+  const dispatch = useDispatch();
+  const navigation = useNavigate();
+  const { authorization } = useSelector((state) => state.authorization);
+
+  useEffect(() => {
+    if (!authorization) {
+      navigation('/sign-in');
+    }
+  }, [authorization]);
+
   const {
     register,
     formState: { errors },
@@ -26,8 +36,6 @@ function CreateArticle() {
   const { idArticle } = useSelector((state) => state.articleList);
   const [create, setCreate] = useState(false);
   const [edit, setEdit] = useState(false);
-  const dispatch = useDispatch();
-  const navigation = useNavigate();
 
   const clickAddTag = () => {
     dispatch(addTag({ name: tagName }));
@@ -44,7 +52,7 @@ function CreateArticle() {
     } else {
       await dispatch(putEditArticle({ id: token, body: data, slug: idArticle }));
       setEdit(true);
-      setTimeout(() => navigation('/articles'), 2000);
+      setTimeout(() => setEdit(false), 2000);
     }
   };
 
@@ -67,14 +75,12 @@ function CreateArticle() {
   );
 
   const creationSuccess = (
-    <Alert message="Статья успешно добавлена" type="success" className={style['create-article__alert']} />
+    <Alert message="The article was successfully added" type="success" className={style['create-article__alert']} />
   );
   const editSuccess = (
     <Alert
-      message="Успех!"
-      description="Статья успешно изменена"
+      message="The article has been successfully modified"
       type="success"
-      showIcon
       className={style['create-article__alert']}
     />
   );
@@ -175,7 +181,8 @@ function CreateArticle() {
   return (
     <>
       {create ? creationSuccess : null}
-      {edit ? editSuccess : content}
+      {edit ? editSuccess : null}
+      {content}
     </>
   );
 }

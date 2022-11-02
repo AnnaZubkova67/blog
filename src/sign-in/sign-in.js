@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import classnames from 'classnames';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { postSignIn } from '../store/authorizationSlice';
 
@@ -20,12 +20,17 @@ function SignIn() {
   const dispatch = useDispatch();
   const navigation = useNavigate();
 
-  const onSubmit = async (data) => {
-    const user = await dispatch(postSignIn(data));
-    if (user.meta.requestStatus === 'fulfilled') {
-      navigation('/articles');
-    }
+  const onSubmit = (data) => {
+    dispatch(postSignIn(data));
   };
+
+  const { authorization } = useSelector((state) => state.authorization);
+
+  useEffect(() => {
+    if (authorization) {
+      navigation(-1);
+    }
+  }, [authorization]);
 
   return (
     <div className={style['sign-in']}>

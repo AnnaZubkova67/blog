@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 import classnames from 'classnames';
+import { Button, Popconfirm } from 'antd';
 
 import { gettingID } from '../store/articleListSlice';
 import { postLike, deleteLike, fetchArticle, deleteArticle, createArticle } from '../store/articleSlice';
@@ -13,9 +14,11 @@ import likeImg from './like.svg';
 
 function ArticlePreview({ elem }) {
   const dispatch = useDispatch();
-  const { username, token } = useSelector((state) => state.authorization);
+  const navigation = useNavigate();
+  const { username, token, authorization } = useSelector((state) => state.authorization);
   const { idArticle } = useSelector((state) => state.articleList);
   const [article, setArticle] = useState({});
+  const [mark, setMark] = useState(article.favorited);
   // eslint-disable-next-line prefer-rest-params
   const presenceOfArguments = Object.keys(arguments[0]).length;
 
@@ -35,23 +38,37 @@ function ArticlePreview({ elem }) {
     }
   }, [fullArticle]);
 
-  const like = () => {
+  const like = async () => {
     if (!article.favorited) {
-      dispatch(postLike({ id: token, name: article.slug }));
+      await dispatch(postLike({ id: token, name: article.slug }));
+      setMark(true);
     } else {
-      dispatch(deleteLike({ id: token, name: article.slug }));
+      await dispatch(deleteLike({ id: token, name: article.slug }));
+      setMark(false);
     }
   };
 
+  useEffect(() => {
+    if ((mark || (!mark && Object.keys(fullArticle).length)) && typeof mark !== 'undefined') {
+      setArticle(fullArticle);
+    }
+  }, [mark]);
+
+  const deleteButton = (
+    <Popconfirm
+      placement="rightTop"
+      title="Are you sure to delete this article?"
+      okText="Yes"
+      cancelText="No"
+      onConfirm={() => dispatch(deleteArticle({ id: token, slug: idArticle }))}
+    >
+      <Button className={styles['article__button-delete']}>Delete</Button>
+    </Popconfirm>
+  );
+
   const control = (
     <div className={styles.article__buttons}>
-      <button
-        type="button"
-        className={styles['article__button-delete']}
-        onClick={() => dispatch(deleteArticle({ id: token, slug: idArticle }))}
-      >
-        Delete
-      </button>
+      {deleteButton}
       <NavLink
         to={`/articles/${idArticle}/edit`}
         className={styles['article__button-edit']}
@@ -81,10 +98,21 @@ function ArticlePreview({ elem }) {
               >
                 {article.title}
               </Link>
-              <div role="presentation" className={styles.article__like} onClick={like} onKeyDown={like}>
-                <img src={article.favorited ? likeImg : noLikeImg} alt="like" />
-                {article.favoritesCount}
-              </div>
+              <Popconfirm
+                title="Log in to mark the article as liked"
+                disabled={authorization}
+                onConfirm={() => navigation('/sign-in')}
+              >
+                <div
+                  role="presentation"
+                  className={styles.article__like}
+                  onClick={authorization ? like : null}
+                  onKeyDown={authorization ? like : null}
+                >
+                  <img src={article.favorited ? likeImg : noLikeImg} alt="like" />
+                  {article.favoritesCount}
+                </div>
+              </Popconfirm>
             </div>
             <ul className={styles.article__tags}>
               {article.tagList.map((value) => (

@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { Button, Popconfirm } from 'antd';
 
 import { logOut } from '../store/authorizationSlice';
 import { createArticle } from '../store/articleSlice';
@@ -32,6 +33,18 @@ function Header() {
     </div>
   );
 
+  const logOutButton = (
+    <Popconfirm
+      placement="bottomRight"
+      title="Вы действительно хотите выйти?"
+      okText="Да"
+      cancelText="Нет"
+      onConfirm={clickLogOut}
+    >
+      <Button className={styles['header__log-out']}>Log Out</Button>
+    </Popconfirm>
+  );
+
   const authorized = (
     <div className={styles.header__authorization}>
       <NavLink to="/new-article" className={setActive} onClick={() => dispatch(createArticle({ event: 'create' }))}>
@@ -41,9 +54,7 @@ function Header() {
         <p className={styles.header__text}>{username}</p>
         <img src={image !== '' ? image : userImg} alt="user img" className={styles.header__image} />
       </NavLink>
-      <NavLink to="/sign-up" className={styles['header__log-out']} onClick={clickLogOut}>
-        Log Out
-      </NavLink>
+      {logOutButton}
     </div>
   );
 

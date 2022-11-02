@@ -10,11 +10,11 @@ export const postSignUp = createAsyncThunk('authorization/postSignUp', async (bo
       },
       body: JSON.stringify({ user: body }),
     });
-    // if(res.status === 422){
-    //  return await res.json().then(result => result);
-    // }
+    if (res.status === 422) {
+      return await res.json().then((result) => rejectWithValue(result));
+    }
     if (!res.ok) {
-      throw new Error('Невозможно загрузить данные');
+      throw new Error();
     }
     res = await res.json();
     return res;
@@ -95,6 +95,7 @@ const setFulfilled = (state, action) => {
   // }
   state.status = 'resolved';
   state.email = action.payload.user.email;
+  state.user = action.payload.user;
   state.token = action.payload.user.token;
   localStorage.setItem('token', JSON.stringify(action.payload.user.token));
   state.username = action.payload.user.username;
@@ -116,6 +117,7 @@ const authorizationSlice = createSlice({
     status: '',
     error: false,
     errorMessage: {},
+    user: {},
     authorization: false,
     email: '',
     token: '',
