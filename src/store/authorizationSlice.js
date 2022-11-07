@@ -33,6 +33,9 @@ export const postSignIn = createAsyncThunk('authorization/postSignIn', async (bo
       },
       body: JSON.stringify({ user: body }),
     });
+    if (res.status === 422) {
+      return await res.json().then((result) => rejectWithValue(result));
+    }
     if (!res.ok) {
       throw new Error('Невозможно загрузить данные');
     }
@@ -54,6 +57,9 @@ export const putEditProfile = createAsyncThunk('authorization/putEditProfile', a
       },
       body: JSON.stringify({ user: info.body }),
     });
+    if (res.status === 422) {
+      return await res.json().then((result) => rejectWithValue(result));
+    }
     if (!res.ok) {
       throw new Error('Невозможно загрузить данные');
     }
@@ -90,9 +96,6 @@ const setPending = (state) => {
 };
 
 const setFulfilled = (state, action) => {
-  // if(action.payload.errors){
-  //   state.errorMessage = action.payload.errors;
-  // }
   state.status = 'resolved';
   state.email = action.payload.user.email;
   state.user = action.payload.user;
@@ -106,23 +109,23 @@ const setFulfilled = (state, action) => {
   state.error = false;
 };
 
-const setRejected = (state) => {
+const setRejected = (state, action) => {
   state.status = 'rejected';
+  if (action.payload.errors) {
+    state.errorMessage = action.payload.errors;
+  }
   state.error = true;
 };
 
 const authorizationSlice = createSlice({
   name: 'authorization',
   initialState: {
-    status: '',
+    status: 'resolved',
     error: false,
     errorMessage: {},
     user: {},
     authorization: false,
-    email: '',
     token: '',
-    username: '',
-    image: '',
   },
   reducers: {
     logOut: (state) => {

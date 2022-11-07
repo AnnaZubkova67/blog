@@ -26,7 +26,7 @@ export const fetchArticleList = createAsyncThunk(
 const articleListSlice = createSlice({
   name: 'articleList',
   initialState: {
-    status: '',
+    status: 'resolved',
     error: false,
     idArticle: '',
     pagination: 1,

@@ -1,36 +1,52 @@
 import React, { useEffect } from 'react';
-import { Pagination } from 'antd';
+import { Pagination, Alert, Spin } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchArticleList, setPagination } from '../store/articleListSlice';
-import ArticlePreview from '../article-preview/article-preview';
+import Article from '../article/article';
 
 import styles from './lest-articles.module.scss';
 import 'antd/dist/antd.css';
 
 function ListArticles() {
   const dispatch = useDispatch();
-  const { articleList, articlesCount, pagination } = useSelector((state) => state.articleList);
+  const { articleList, articlesCount, pagination, error, status } = useSelector((state) => state.articleList);
 
   useEffect(() => {
     dispatch(fetchArticleList(pagination));
   }, [pagination]);
 
-  return (
-    <>
-      <ul className={styles.list}>
-        {articleList ? articleList.map((elem) => <ArticlePreview elem={elem} key={Math.random()} />) : null}
-      </ul>
-      <Pagination
-        defaultPageSize={20}
-        showSizeChanger={false}
-        defaultCurrent={pagination}
-        current={pagination}
-        total={articlesCount}
-        className={styles.list__pagination}
-        onChange={(e) => dispatch(setPagination({ index: e }))}
+  const errorElement = (
+    <div className={styles['list-articles__error']}>
+      <Alert
+        message="Error"
+        description="Something went wrong, it is impossible to get the data :("
+        type="error"
+        showIcon
       />
-    </>
+    </div>
+  );
+
+  const paginationElement = (
+    <Pagination
+      defaultPageSize={20}
+      showSizeChanger={false}
+      defaultCurrent={pagination}
+      current={pagination}
+      total={articlesCount}
+      className={styles['list-articles__pagination']}
+      onChange={(e) => dispatch(setPagination({ index: e }))}
+    />
+  );
+
+  return (
+    <Spin spinning={status === 'loading'} delay={500} size="large">
+      <ul className={styles['list-articles']}>
+        {articleList ? articleList.map((elem) => <Article elem={elem} key={Math.random()} />) : null}
+        {articleList && !error && status !== 'loading' ? paginationElement : null}
+        {error && status !== 'loading' ? errorElement : null}
+      </ul>
+    </Spin>
   );
 }
 

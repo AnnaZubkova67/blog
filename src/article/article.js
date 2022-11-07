@@ -3,22 +3,27 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 import classnames from 'classnames';
-import { Button, Popconfirm } from 'antd';
+import { Alert, Button, Popconfirm, Spin } from 'antd';
 
 import { gettingID } from '../store/articleListSlice';
 import { postLike, deleteLike, fetchArticle, deleteArticle, createArticle } from '../store/articleSlice';
 
-import styles from './article-preview.module.scss';
+import styles from './article.module.scss';
 import noLikeImg from './heart.svg';
 import likeImg from './like.svg';
 
-function ArticlePreview({ elem }) {
+function Article({ elem }) {
+  // eslint-disable-next-line global-require
+  const MarkdownIt = require('markdown-it');
+  const md = new MarkdownIt();
+
   const dispatch = useDispatch();
   const navigation = useNavigate();
-  const { username, token, authorization } = useSelector((state) => state.authorization);
+  const { token, authorization, user } = useSelector((state) => state.authorization);
   const { idArticle } = useSelector((state) => state.articleList);
   const [article, setArticle] = useState({});
   const [mark, setMark] = useState(article.favorited);
+  const [deleted, setDeleted] = useState(false);
   // eslint-disable-next-line prefer-rest-params
   const presenceOfArguments = Object.keys(arguments[0]).length;
 
@@ -30,7 +35,7 @@ function ArticlePreview({ elem }) {
     }
   }, []);
 
-  const { fullArticle } = useSelector((state) => state.article);
+  const { fullArticle, error, status } = useSelector((state) => state.article);
 
   useEffect(() => {
     if (Object.keys(fullArticle).length && !presenceOfArguments) {
@@ -54,13 +59,29 @@ function ArticlePreview({ elem }) {
     }
   }, [mark]);
 
+  const clickDelete = async () => {
+    const request = await dispatch(deleteArticle({ id: token, slug: idArticle }));
+    if (request.meta.requestStatus === 'fulfilled') {
+      setDeleted(true);
+    }
+  };
+
+  useEffect(() => {
+    if (deleted) {
+      setTimeout(() => {
+        setDeleted(false);
+        navigation('/articles');
+      }, 2000);
+    }
+  }, [deleted]);
+
   const deleteButton = (
     <Popconfirm
       placement="rightTop"
       title="Are you sure to delete this article?"
       okText="Yes"
       cancelText="No"
-      onConfirm={() => dispatch(deleteArticle({ id: token, slug: idArticle }))}
+      onConfirm={clickDelete}
     >
       <Button className={styles['article__button-delete']}>Delete</Button>
     </Popconfirm>
@@ -81,11 +102,11 @@ function ArticlePreview({ elem }) {
 
   // eslint-disable-next-line consistent-return
   const articleContent = () => {
-    if (Object.keys(article).length && article) {
+    if (Object.keys(article).length && article && !deleted) {
       return (
         <li
           className={classnames(styles.article, {
-            [styles['article__my-article']]: username === article.author.username,
+            [styles['article__my-article']]: user.username === article.author.username,
             [styles['article__preview-article']]: presenceOfArguments,
           })}
         >
@@ -103,15 +124,16 @@ function ArticlePreview({ elem }) {
                 disabled={authorization}
                 onConfirm={() => navigation('/sign-in')}
               >
-                <div
-                  role="presentation"
+                <button
+                  type="button"
+                  disabled={status !== 'resolved'}
                   className={styles.article__like}
                   onClick={authorization ? like : null}
                   onKeyDown={authorization ? like : null}
                 >
                   <img src={article.favorited ? likeImg : noLikeImg} alt="like" />
                   {article.favoritesCount}
-                </div>
+                </button>
               </Popconfirm>
             </div>
             <ul className={styles.article__tags}>
@@ -122,7 +144,10 @@ function ArticlePreview({ elem }) {
               ))}
             </ul>
             <p className={styles.article__text}>{article.description}</p>
-            <p className={styles.article__body}>{!presenceOfArguments ? article.body : null}</p>
+            {!presenceOfArguments ? (
+              // eslint-disable-next-line react/no-danger
+              <p className={styles.article__body} dangerouslySetInnerHTML={{ __html: md.render(article.body) }} />
+            ) : null}
           </div>
           <div
             className={classnames(styles.article__profile, {
@@ -136,14 +161,36 @@ function ArticlePreview({ elem }) {
               </div>
               <img src={article.author.image} alt="user img" className={styles['article__user-img']} />
             </div>
-            {username === article.author.username && !presenceOfArguments ? control : null}
+            {user.username === article.author.username && !presenceOfArguments ? control : null}
           </div>
         </li>
       );
+    }
+    if (error) {
+      return (
+        <div className={styles.article__error}>
+          <Alert
+            message="Error"
+            description="Something went wrong, it is impossible to get the data :("
+            type="error"
+            showIcon
+          />
+        </div>
+      );
+    }
+    if (deleted) {
+      return (
+        <div className={styles.article__error}>
+          <Alert message="Success!" description="The article was successfully deleted" type="success" showIcon />
+        </div>
+      );
+    }
+    if (status === 'loading') {
+      return <Spin spinning={status === 'loading'} delay={500} size="large" className={styles.article__spin} />;
     }
   };
 
   return articleContent();
 }
 
-export default ArticlePreview;
+export default Article;

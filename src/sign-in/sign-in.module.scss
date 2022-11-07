@@ -88,4 +88,12 @@
   &__sign-up {
     text-align: center;
   }
+
+  &__error-message {
+    align-self: center;
+    width: 100%;
+    position: sticky !important;
+    margin-top: 10px;
+    z-index: 2;
+  }
 }

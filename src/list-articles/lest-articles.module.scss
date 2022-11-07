@@ -1,9 +1,21 @@
-.list {
+.list-articles {
+  padding-inline-start: 0;
+  list-style-type: none;
+  margin-block-start: 0;
+  margin-block-end: 0;
 
   &__pagination {
     display: flex;
     justify-content: center;
     margin-top: 27px !important;
     margin-bottom: 18px !important;
+  }
+
+  &__error {
+    align-self: center;
+    width: 100%;
+    position: sticky !important;
+    margin-top: 10px;
+    z-index: 2;
   }
 }

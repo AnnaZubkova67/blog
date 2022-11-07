@@ -30,7 +30,7 @@ function EditProfile() {
   });
 
   const dispatch = useDispatch();
-  const { token } = useSelector((state) => state.authorization);
+  const { token, errorMessage } = useSelector((state) => state.authorization);
   const [edit, setEdit] = useState(false);
 
   const onSubmit = async (data) => {
@@ -68,7 +68,7 @@ function EditProfile() {
             placeholder="Username"
             defaultValue={user.username}
             className={classnames(style['edit-profile__input'], {
-              [style['edit-profile__input--error']]: errors.username,
+              [style['edit-profile__input--error']]: errors.username || errorMessage.username,
             })}
             {...register('username', {
               required: 'Поле не должно быть пустым',
@@ -84,6 +84,7 @@ function EditProfile() {
           />
           <div className={style['edit-profile__error']}>
             {errors.username ? <p>{errors.username.message}</p> : null}
+            {errorMessage.username ? <p>The username is already taken</p> : null}
           </div>
           <label htmlFor="email">Email address</label>
           <input
@@ -91,7 +92,7 @@ function EditProfile() {
             placeholder="Email address"
             defaultValue={user.email}
             className={classnames(style['edit-profile__input'], {
-              [style['edit-profile__input--error']]: errors.email,
+              [style['edit-profile__input--error']]: errors.email || errorMessage.email,
             })}
             {...register('email', {
               required: true,
@@ -100,6 +101,7 @@ function EditProfile() {
           />
           <div className={style['edit-profile__error']}>
             {errors.email ? <p>Некорректный адрес электронной почты</p> : null}
+            {errorMessage.email ? <p>Email is already busy</p> : null}
           </div>
           <label htmlFor="password">New password</label>
           <input

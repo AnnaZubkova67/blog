@@ -84,7 +84,8 @@
   }
 
    &__button--active,
-   &__text:hover{
+   &__text:hover,
+   &__authorization &__log-out:hover{
     border-radius: 5px;
     border: 1px solid #52C41A;
     color: #52C41A !important;

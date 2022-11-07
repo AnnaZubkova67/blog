@@ -4,7 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Button, Popconfirm } from 'antd';
 
 import { logOut } from '../store/authorizationSlice';
-import { createArticle } from '../store/articleSlice';
+import { createArticle, clearingThePreviousArticle } from '../store/articleSlice';
+import { fetchArticleList } from '../store/articleListSlice';
 
 import styles from './header.module.scss';
 import userImg from './user-img.svg';
@@ -15,10 +16,11 @@ function Header() {
 
   const setActive = ({ isActive }) => (isActive ? styles['header__button--active'] : styles.header__text);
 
-  const { authorization, username, image } = useSelector((state) => state.authorization);
+  const { authorization, user } = useSelector((state) => state.authorization);
 
   const clickLogOut = async () => {
     await dispatch(logOut());
+    await dispatch(fetchArticleList(1));
     navigation('/articles');
   };
 
@@ -36,9 +38,9 @@ function Header() {
   const logOutButton = (
     <Popconfirm
       placement="bottomRight"
-      title="Вы действительно хотите выйти?"
-      okText="Да"
-      cancelText="Нет"
+      title="Do you really want to log out?"
+      okText="Yes"
+      cancelText="No"
       onConfirm={clickLogOut}
     >
       <Button className={styles['header__log-out']}>Log Out</Button>
@@ -51,8 +53,8 @@ function Header() {
         Create article
       </NavLink>
       <NavLink to="/profile" className={styles.header__user}>
-        <p className={styles.header__text}>{username}</p>
-        <img src={image !== '' ? image : userImg} alt="user img" className={styles.header__image} />
+        <p className={styles.header__text}>{user.username}</p>
+        <img src={user.image ? user.image : userImg} alt="user img" className={styles.header__image} />
       </NavLink>
       {logOutButton}
     </div>
@@ -60,7 +62,7 @@ function Header() {
 
   return (
     <header className={styles.header}>
-      <NavLink to="/articles" className={setActive}>
+      <NavLink to="/articles" className={setActive} onClick={() => dispatch(clearingThePreviousArticle())}>
         Realworld Blog
       </NavLink>
       {authorization ? authorized : notAuthorized}

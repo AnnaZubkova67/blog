@@ -64,7 +64,7 @@ export const putEditArticle = createAsyncThunk('article/putEditArticle', async (
 
 export const deleteArticle = createAsyncThunk('article/deleteArticle', async (info, { rejectWithValue }) => {
   try {
-    let res = await fetch(`https://blog.kata.academy/api/articles/${info.slug}`, {
+    const res = await fetch(`https://blog.kata.academy/api/articles/${info.slug}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Token ${info.id}`,
@@ -75,8 +75,8 @@ export const deleteArticle = createAsyncThunk('article/deleteArticle', async (in
     if (!res.ok) {
       throw new Error('Невозможно загрузить данные');
     }
-    res = await res.json();
-    return res;
+
+    return true;
   } catch (error) {
     return rejectWithValue(error.message);
   }
@@ -122,10 +122,26 @@ export const deleteLike = createAsyncThunk('article/deleteLike', async (info, { 
   }
 });
 
+const setPending = (state) => {
+  state.status = 'loading';
+  state.error = false;
+};
+
+const setFulfilled = (state) => {
+  state.status = 'resolved';
+  state.error = false;
+};
+
+const setRejected = (state, action) => {
+  state.status = 'rejected';
+  state.status = action.payload;
+  state.error = true;
+};
+
 const articleSlice = createSlice({
   name: 'article',
   initialState: {
-    status: null,
+    status: 'resolved',
     error: false,
     fullArticle: {},
     tagList: [],
@@ -145,94 +161,52 @@ const articleSlice = createSlice({
       } else {
         state.activeCreate = false;
       }
+      localStorage.setItem('activeCreate', JSON.stringify(state.activeCreate));
+    },
+
+    clearingThePreviousArticle: (state) => {
+      state.fullArticle = {};
     },
   },
   extraReducers: {
-    [fetchArticle.pending]: (state) => {
-      state.status = 'loading';
-      state.error = false;
-    },
+    [fetchArticle.pending]: setPending,
     [fetchArticle.fulfilled]: (state, action) => {
-      state.status = 'resolved';
+      setFulfilled(state, action);
       state.fullArticle = action.payload.article;
       state.tagList = action.payload.article.tagList;
-      state.error = false;
     },
     [fetchArticle.rejected]: (state, action) => {
-      state.status = 'rejected';
+      setRejected(state, action);
       state.status = action.payload;
-      state.error = true;
     },
-    [postArticle.pending]: (state) => {
-      state.status = 'loading';
-      state.error = false;
+    [postArticle.pending]: setPending,
+    [postArticle.fulfilled]: setFulfilled,
+    [postArticle.rejected]: setRejected,
+    [putEditArticle.pending]: setPending,
+    [putEditArticle.fulfilled]: setFulfilled,
+    [putEditArticle.rejected]: setRejected,
+    [deleteArticle.pending]: setPending,
+    [deleteArticle.fulfilled]: (state, action) => {
+      setFulfilled(state, action);
+      state.fullArticle = {};
+      state.tagList = [];
     },
-    [postArticle.fulfilled]: (state) => {
-      state.status = 'resolved';
-      state.error = false;
-    },
-    [postArticle.rejected]: (state, action) => {
-      state.status = 'rejected';
-      state.status = action.payload;
-      state.error = true;
-    },
-    [putEditArticle.pending]: (state) => {
-      state.status = 'loading';
-      state.error = false;
-    },
-    [putEditArticle.fulfilled]: (state) => {
-      state.status = 'resolved';
-      state.error = false;
-    },
-    [putEditArticle.rejected]: (state, action) => {
-      state.status = 'rejected';
-      state.status = action.payload;
-      state.error = true;
-    },
-    [deleteArticle.pending]: (state) => {
-      state.status = 'loading';
-      state.error = false;
-    },
-    [deleteArticle.fulfilled]: (state) => {
-      state.status = 'resolved';
-      state.error = false;
-    },
-    [deleteArticle.rejected]: (state, action) => {
-      state.status = 'rejected';
-      state.status = action.payload;
-      state.error = true;
-    },
-    [postLike.pending]: (state) => {
-      state.status = 'loading';
-      state.error = false;
-    },
+    [deleteArticle.rejected]: setRejected,
+    [postLike.pending]: setPending,
     [postLike.fulfilled]: (state, action) => {
-      state.status = 'resolved';
+      setFulfilled(state, action);
       state.fullArticle = action.payload.article;
-      state.error = false;
     },
-    [postLike.rejected]: (state, action) => {
-      state.status = 'rejected';
-      state.status = action.payload;
-      state.error = true;
-    },
-    [deleteLike.pending]: (state) => {
-      state.status = 'loading';
-      state.error = false;
-    },
+    [postLike.rejected]: setRejected,
+    [deleteLike.pending]: setPending,
     [deleteLike.fulfilled]: (state, action) => {
-      state.status = 'resolved';
+      setFulfilled(state, action);
       state.fullArticle = action.payload.article;
-      state.error = false;
     },
-    [deleteLike.rejected]: (state, action) => {
-      state.status = 'rejected';
-      state.status = action.payload;
-      state.error = true;
-    },
+    [deleteLike.rejected]: setRejected,
   },
 });
 
-export const { addTag, deleteTag, createArticle } = articleSlice.actions;
+export const { addTag, deleteTag, createArticle, clearingThePreviousArticle } = articleSlice.actions;
 
 export default articleSlice.reducer;

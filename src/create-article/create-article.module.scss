@@ -78,7 +78,11 @@
   }
 
   &__tag {
-   width: 300px;
+   max-width: 300px;
+    margin-bottom: 5px;
+    @media (max-width: 500px) {
+      max-width: 120px;
+    }
   }
 
   &__tags {
@@ -86,6 +90,10 @@
     display: flex;
     margin: 5px;
     justify-content: flex-start;
+    padding-inline-start: 0;
+    list-style-type: none;
+    margin-block-start: 0;
+    margin-block-end: 0;
   }
 
   &__delete-tag,
@@ -101,6 +109,11 @@
     border: 1px solid #F5222D;
     border-radius: 4px;
     color: #F5222D;
+    @media (max-width: 500px) {
+      border: none;
+      padding: 0;
+    }
+
   }
 
   &__add-tag {

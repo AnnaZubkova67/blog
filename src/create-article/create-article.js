@@ -6,18 +6,20 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, Alert } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-import { postArticle, putEditArticle, addTag, deleteTag } from '../store/articleSlice';
+import { postArticle, putEditArticle, addTag, deleteTag, fetchArticle } from '../store/articleSlice';
 
 import style from './create-article.module.scss';
 
 function CreateArticle() {
   const dispatch = useDispatch();
   const navigation = useNavigate();
-  const { authorization } = useSelector((state) => state.authorization);
+  const { authorization, token } = useSelector((state) => state.authorization);
 
   useEffect(() => {
     if (!authorization) {
       navigation('/sign-in');
+    } else {
+      dispatch(fetchArticle({ id: token, slug: JSON.parse(localStorage.getItem('idArticle')) }));
     }
   }, [authorization]);
 
@@ -30,10 +32,9 @@ function CreateArticle() {
     mode: 'onBlur',
   });
 
-  const { tagList, activeCreate, status } = useSelector((state) => state.article);
-  const { token } = useSelector((state) => state.authorization);
-  const [tagName, setTagName] = useState('');
+  const { tagList, activeCreate, status, error } = useSelector((state) => state.article);
   const { idArticle } = useSelector((state) => state.articleList);
+  const [tagName, setTagName] = useState('');
   const [create, setCreate] = useState(false);
   const [edit, setEdit] = useState(false);
 
@@ -44,7 +45,7 @@ function CreateArticle() {
 
   const onSubmit = async (data) => {
     data.tagList = tagList;
-    if (activeCreate) {
+    if (JSON.parse(localStorage.getItem('activeCreate'))) {
       await dispatch(postArticle({ id: token, body: data }));
       reset();
       setCreate(true);
@@ -57,12 +58,6 @@ function CreateArticle() {
   };
 
   const { fullArticle } = useSelector((state) => state.article);
-
-  useEffect(() => {
-    if (activeCreate) {
-      reset();
-    }
-  }, [activeCreate]);
 
   const antIcon = (
     <LoadingOutlined
@@ -84,9 +79,17 @@ function CreateArticle() {
       className={style['create-article__alert']}
     />
   );
+
+  const errorElement = (
+    <div className={style['create-article__alert']}>
+      <Alert message="Error" description="Something went wrong, try again :(" type="error" showIcon />
+    </div>
+  );
   const content = (
     <div className={style['create-article']}>
-      <title className={style['create-article__title']}>{activeCreate ? 'Create new article' : 'Edit article'}</title>
+      <title className={style['create-article__title']}>
+        {JSON.parse(localStorage.getItem('activeCreate')) ? 'Create new article' : 'Edit article'}
+      </title>
       <form onSubmit={handleSubmit(onSubmit)} className={style['create-article__form']}>
         <label htmlFor="title">Title</label>
         <input
@@ -180,8 +183,9 @@ function CreateArticle() {
   );
   return (
     <>
-      {create ? creationSuccess : null}
-      {edit ? editSuccess : null}
+      {create && !error ? creationSuccess : null}
+      {edit && !error ? editSuccess : null}
+      {error ? errorElement : null}
       {content}
     </>
   );
