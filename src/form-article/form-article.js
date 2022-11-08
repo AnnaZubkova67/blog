@@ -152,7 +152,7 @@ function FormArticle() {
         />
         <div className={style['form-article__error']}>{errors.text ? <p>{errors.text.message}</p> : null}</div>
         <div>Tags</div>
-        {tagList.map((elem) => (
+        {tagList.map((elem, i) => (
           <div className={style['form-article__tags']} key={Math.random()}>
             <input
               id="tags"
@@ -165,7 +165,7 @@ function FormArticle() {
             <button
               type="button"
               className={style['form-article__delete-tag']}
-              onClick={() => dispatch(deleteTag({ tag: elem }))}
+              onClick={() => dispatch(deleteTag({ index: i }))}
             >
               Delete
             </button>

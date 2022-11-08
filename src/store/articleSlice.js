@@ -152,7 +152,7 @@ const articleSlice = createSlice({
       state.tagList.push(action.payload.name);
     },
     deleteTag: (state, action) => {
-      state.tagList = state.tagList.filter((elem) => elem !== action.payload.tag);
+      state.tagList = state.tagList.filter((elem, i) => i !== action.payload.index);
     },
     createArticle: (state, action) => {
       if (action.payload.event === 'create') {
