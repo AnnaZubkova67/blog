@@ -53,46 +53,44 @@ function SignIn() {
   return (
     <>
       {error && !Object.keys(errorMessage).length ? errorElement : null}
-      <div className={style['sign-in']}>
-        <title className={style['sign-in__title']}>Sign In</title>
-        <form onSubmit={handleSubmit(onSubmit)} className={style['sign-in__form']}>
+      <div className={style.form}>
+        <title className={style.form__title}>Sign In</title>
+        <form onSubmit={handleSubmit(onSubmit)} className={style.form__shape}>
           <label htmlFor="email">Email address</label>
           <input
             id="email"
             placeholder="Email address"
-            className={classnames(style['sign-in__input'], {
-              [style['sign-in__input--error']]: errors.email || Object.keys(errorMessage).length,
+            className={classnames(style.form__input, {
+              [style['form__input--error']]: errors.email || Object.keys(errorMessage).length,
             })}
             {...register('email', {
               required: true,
               pattern: /^[a-z0-9._%+-]+@[a-z0-9-]+.+.[a-z]{2,4}$/g,
             })}
           />
-          <div className={style['sign-in__error']}>
-            {errors.email ? <p>Некорректный адрес электронной почты</p> : null}
-          </div>
+          <div className={style.form__error}>{errors.email ? <p>Некорректный адрес электронной почты</p> : null}</div>
           <label htmlFor="password">Password</label>
           <input
             id="password"
             type="password"
             placeholder="Password"
-            className={classnames(style['sign-in__input'], {
-              [style['sign-in__input--error']]: errors.password || Object.keys(errorMessage).length,
+            className={classnames(style.form__input, {
+              [style['form__input--error']]: errors.password || Object.keys(errorMessage).length,
             })}
             {...register('password', {
               required: 'Поле не должно быть пустым',
             })}
           />
-          <div className={style['sign-in__error']}>
+          <div className={style.form__error}>
             {errors.password ? <p>{errors.password.message}</p> : null}
             {Object.keys(errorMessage).length ? <p>Invalid email address or password</p> : null}
           </div>
-          <button type="submit" className={style['sign-in__login']}>
+          <button type="submit" className={style.form__submit}>
             {status === 'loading' ? <Spin indicator={antIcon} /> : 'Login'}
           </button>
         </form>
 
-        <p className={style['sign-in__sign-up']}>
+        <p className={style['form__sign-up']}>
           Already have an account? <Link to="/sign-up">Sign Up</Link>.
         </p>
       </div>

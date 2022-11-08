@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Alert } from 'antd';
 
 import Header from '../header/header';
@@ -18,8 +18,6 @@ import styles from './app.module.scss';
 function App() {
   const dispatch = useDispatch();
   const [network, setNetwork] = useState(true);
-  const { idArticle } = useSelector((state) => state.articleList);
-  const [slug, setSlug] = useState('');
 
   const onNetworkState = () => {
     if (network) {
@@ -34,14 +32,6 @@ function App() {
       dispatch(getUser(JSON.parse(localStorage.getItem('token'))));
     }
   }, []);
-
-  useEffect(() => {
-    if (idArticle !== '') {
-      setSlug(idArticle);
-    } else {
-      setSlug(JSON.parse(localStorage.getItem('idArticle')));
-    }
-  }, [idArticle]);
 
   const networkElement = (
     <div className={styles.app__error}>
@@ -58,7 +48,7 @@ function App() {
         <div className={styles.content}>
           <Routes>
             <Route path="/articles" element={<ListArticles />} />
-            <Route path={`/article/${slug}`} element={<Article />} />
+            <Route path="/article/:id" element={<Article />} />
             <Route path="/sign-up" element={<SignUp />} />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/profile" element={<EditProfile />} />

@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, Alert } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-import { postArticle, putEditArticle, addTag, deleteTag, fetchArticle } from '../store/articleSlice';
+import { postArticle, putEditArticle, addTag, deleteTag } from '../store/articleSlice';
 
 import style from './create-article.module.scss';
 
@@ -18,8 +18,6 @@ function CreateArticle() {
   useEffect(() => {
     if (!authorization) {
       navigation('/sign-in');
-    } else {
-      dispatch(fetchArticle({ id: token, slug: JSON.parse(localStorage.getItem('idArticle')) }));
     }
   }, [authorization]);
 
@@ -32,7 +30,7 @@ function CreateArticle() {
     mode: 'onBlur',
   });
 
-  const { tagList, activeCreate, status, error } = useSelector((state) => state.article);
+  const { tagList, status, error } = useSelector((state) => state.article);
   const { idArticle } = useSelector((state) => state.articleList);
   const [tagName, setTagName] = useState('');
   const [create, setCreate] = useState(false);
@@ -58,6 +56,7 @@ function CreateArticle() {
   };
 
   const { fullArticle } = useSelector((state) => state.article);
+  const activeCreate = JSON.parse(localStorage.getItem('activeCreate'));
 
   const antIcon = (
     <LoadingOutlined
@@ -87,16 +86,14 @@ function CreateArticle() {
   );
   const content = (
     <div className={style['create-article']}>
-      <title className={style['create-article__title']}>
-        {JSON.parse(localStorage.getItem('activeCreate')) ? 'Create new article' : 'Edit article'}
-      </title>
+      <title className={style['create-article__title']}>{activeCreate ? 'Create new article' : 'Edit article'}</title>
       <form onSubmit={handleSubmit(onSubmit)} className={style['create-article__form']}>
         <label htmlFor="title">Title</label>
         <input
           id="title"
           type="text"
           placeholder="Title"
-          defaultValue={activeCreate ? '' : fullArticle.title}
+          value={activeCreate ? '' : fullArticle.title}
           className={classnames(style['create-article__input'], {
             [style['create-article__input--error']]: errors.title,
           })}
@@ -110,7 +107,7 @@ function CreateArticle() {
           id="short-description"
           type="text"
           placeholder="Short description"
-          defaultValue={activeCreate ? '' : fullArticle.description}
+          value={activeCreate ? '' : fullArticle.description}
           className={classnames(style['create-article__input'], {
             [style['create-article__input--error']]: errors.description,
           })}
@@ -126,7 +123,7 @@ function CreateArticle() {
           id="text"
           placeholder="Text"
           rows="10"
-          defaultValue={activeCreate ? '' : fullArticle.body}
+          value={activeCreate ? '' : fullArticle.body}
           className={classnames(style['create-article__input'], {
             [style['create-article__input--error']]: errors.text,
           })}

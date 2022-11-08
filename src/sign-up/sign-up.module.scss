@@ -1,4 +1,4 @@
-.sign-up {
+.form {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -16,7 +16,7 @@
   border-radius: 6px;
   margin: 59px auto auto auto;
 
-  &__form {
+  &__shape {
     display: flex;
     min-height: 340px;
     flex-grow: 1;
@@ -101,7 +101,7 @@
     color: #BFBFBF;
   }
 
-  &__create {
+  &__submit {
     display: flex;
     flex-direction: column;
     align-items: center;

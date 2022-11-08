@@ -5,7 +5,7 @@ export const fetchArticle = createAsyncThunk('article/fetchArticle', async (info
     let res = await fetch(`https://blog.kata.academy/api/articles/${info.slug}`, {
       method: 'GET',
       headers: {
-        Authorization: `Token ${info.id}`,
+        Authorization: `Token ${info.tokenUser}`,
         accept: 'application/json',
         'Content-Type': 'application/json;charset=utf-8',
       },
@@ -157,6 +157,7 @@ const articleSlice = createSlice({
     createArticle: (state, action) => {
       if (action.payload.event === 'create') {
         state.activeCreate = true;
+        state.fullArticle = {};
         state.tagList = [];
       } else {
         state.activeCreate = false;

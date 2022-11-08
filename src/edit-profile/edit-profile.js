@@ -52,23 +52,21 @@ function EditProfile() {
     />
   );
 
-  const editSuccess = (
-    <Alert message="Profile changed successfully" type="success" className={style['edit-profile__alert']} />
-  );
+  const editSuccess = <Alert message="Profile changed successfully" type="success" className={style.form__alert} />;
 
   return (
     <>
       {edit ? editSuccess : null}
-      <div className={style['edit-profile']}>
-        <title className={style['edit-profile__title']}>Edit Profile</title>
-        <form onSubmit={handleSubmit(onSubmit)} className={style['edit-profile__form']}>
+      <div className={style.form}>
+        <title className={style.form__title}>Edit Profile</title>
+        <form onSubmit={handleSubmit(onSubmit)} className={style.form__shape}>
           <label htmlFor="username">Username</label>
           <input
             id="username"
             placeholder="Username"
             defaultValue={user.username}
-            className={classnames(style['edit-profile__input'], {
-              [style['edit-profile__input--error']]: errors.username || errorMessage.username,
+            className={classnames(style.form__input, {
+              [style['form__input--error']]: errors.username || errorMessage.username,
             })}
             {...register('username', {
               required: 'Поле не должно быть пустым',
@@ -82,7 +80,7 @@ function EditProfile() {
               },
             })}
           />
-          <div className={style['edit-profile__error']}>
+          <div className={style.form__error}>
             {errors.username ? <p>{errors.username.message}</p> : null}
             {errorMessage.username ? <p>The username is already taken</p> : null}
           </div>
@@ -91,15 +89,15 @@ function EditProfile() {
             id="email"
             placeholder="Email address"
             defaultValue={user.email}
-            className={classnames(style['edit-profile__input'], {
-              [style['edit-profile__input--error']]: errors.email || errorMessage.email,
+            className={classnames(style.form__input, {
+              [style['form__input--error']]: errors.email || errorMessage.email,
             })}
             {...register('email', {
               required: true,
               pattern: /^[a-z0-9._%+-]+@[a-z0-9-]+.+.[a-z]{2,4}$/g,
             })}
           />
-          <div className={style['edit-profile__error']}>
+          <div className={style.form__error}>
             {errors.email ? <p>Некорректный адрес электронной почты</p> : null}
             {errorMessage.email ? <p>Email is already busy</p> : null}
           </div>
@@ -108,8 +106,8 @@ function EditProfile() {
             id="password"
             type="new-password"
             placeholder="New password"
-            className={classnames(style['edit-profile__input'], {
-              [style['edit-profile__input--error']]: errors.password,
+            className={classnames(style.form__input, {
+              [style['form__input--error']]: errors.password,
             })}
             {...register('password', {
               minLength: {
@@ -122,24 +120,22 @@ function EditProfile() {
               },
             })}
           />
-          <div className={style['edit-profile__error']}>
-            {errors.password ? <p>{errors.password.message}</p> : null}
-          </div>
+          <div className={style.form__error}>{errors.password ? <p>{errors.password.message}</p> : null}</div>
           <label htmlFor="image">Avatar image (url)</label>
           <input
             id="image"
             placeholder="Avatar image"
             defaultValue={user.image}
-            className={classnames(style['edit-profile__input'], {
-              [style['edit-profile__input--error']]: errors.image,
+            className={classnames(style.form__input, {
+              [style['form__input--error']]: errors.image,
             })}
             {...register('image', {
               /* eslint-disable-next-line */
               pattern: /[-a-zA-Z0-9@:%_+.~#?&\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&\/=]*)?/gi,
             })}
           />
-          <div className={style['edit-profile__error']}>{errors.image ? <p>Некорректный URL</p> : null}</div>
-          <button type="submit" className={style['edit-profile__save']} disabled={status === 'loading'}>
+          <div className={style.form__error}>{errors.image ? <p>Некорректный URL</p> : null}</div>
+          <button type="submit" className={style.form__submit} disabled={status === 'loading'}>
             {status === 'loading' ? <Spin indicator={antIcon} /> : 'Save'}
           </button>
         </form>

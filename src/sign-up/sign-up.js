@@ -62,15 +62,15 @@ function SignUp() {
   return (
     <>
       {error ? errorElement : null}
-      <div className={style['sign-up']}>
-        <title className={style['sign-up__title']}>Create new account</title>
-        <form onSubmit={handleSubmit(onSubmit)} className={style['sign-up__form']}>
+      <div className={style.form}>
+        <title className={style.form__title}>Create new account</title>
+        <form onSubmit={handleSubmit(onSubmit)} className={style.form__shape}>
           <label htmlFor="username">Username</label>
           <input
             id="username"
             placeholder="Username"
-            className={classnames(style['sign-up__input'], {
-              [style['sign-up__input--error']]: errors.username || errorMessage.username,
+            className={classnames(style.form__input, {
+              [style['form__input--error']]: errors.username || errorMessage.username,
             })}
             {...register('username', {
               required: true,
@@ -84,7 +84,7 @@ function SignUp() {
               },
             })}
           />
-          <div className={style['sign-up__error']}>
+          <div className={style.form__error}>
             {errors.username ? <p>{errors.username.message}</p> : null}
             {errorMessage.username ? <p>The username is already taken</p> : null}
           </div>
@@ -92,15 +92,15 @@ function SignUp() {
           <input
             id="email"
             placeholder="Email address"
-            className={classnames(style['sign-up__input'], {
-              [style['sign-up__input--error']]: errors.email || errorMessage.email,
+            className={classnames(style.form__input, {
+              [style['form__input--error']]: errors.email || errorMessage.email,
             })}
             {...register('email', {
               required: true,
               pattern: /^[a-z0-9._%+-]+@[a-z0-9-]+.+.[a-z]{2,4}$/g,
             })}
           />
-          <div className={style['sign-up__error']}>
+          <div className={style.form__error}>
             {errors.email ? <p>Некорректный адрес электронной почты</p> : null}
             {errorMessage.email ? <p>Email is already busy</p> : null}
           </div>
@@ -109,7 +109,7 @@ function SignUp() {
             id="password"
             type="new-password"
             placeholder="Password"
-            className={classnames(style['sign-up__input'], { [style['sign-up__input--error']]: errors.password })}
+            className={classnames(style.form__input, { [style['form__input--error']]: errors.password })}
             {...register('password', {
               required: true,
               minLength: {
@@ -122,19 +122,19 @@ function SignUp() {
               },
             })}
           />
-          <div className={style['sign-up__error']}>{errors.password ? <p>{errors.password.message}</p> : null}</div>
+          <div className={style.form__error}>{errors.password ? <p>{errors.password.message}</p> : null}</div>
           <label htmlFor="repeat">Repeat password</label>
           <input
             id="repeat"
             type="new-password"
             placeholder="Repeat password"
-            className={classnames(style['sign-up__input'], { [style['sign-up__input--error']]: errors.repeatPassword })}
+            className={classnames(style.form__input, { [style['form__input--error']]: errors.repeatPassword })}
             {...register('repeatPassword', {
               required: true,
               validate: (value) => value === watchPassword,
             })}
           />
-          <div className={style['sign-up__error']}>
+          <div className={style.form__error}>
             {errors.repeatPassword ? <p>{errors.repeatPassword.message}</p> : null}
           </div>
           <input
@@ -144,15 +144,15 @@ function SignUp() {
               required: true,
             })}
           />
-          <label htmlFor="information" className={style['sign-up__information']}>
+          <label htmlFor="information" className={style.form__information}>
             I agree to the processing of my personal information
           </label>
-          <button type="submit" className={style['sign-up__create']} disabled={!isValid}>
+          <button type="submit" className={style.form__submit} disabled={!isValid}>
             {status === 'loading' ? <Spin indicator={antIcon} /> : 'Create'}
           </button>
         </form>
 
-        <p className={style['sign-up__sign-in']}>
+        <p className={style['form__sign-in']}>
           Already have an account? <Link to="/sign-in">Sign In</Link>.
         </p>
       </div>

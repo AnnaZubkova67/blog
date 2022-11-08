@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 import classnames from 'classnames';
@@ -16,6 +16,7 @@ function Article({ elem }) {
   // eslint-disable-next-line global-require
   const MarkdownIt = require('markdown-it');
   const md = new MarkdownIt();
+  const { id } = useParams();
 
   const dispatch = useDispatch();
   const navigation = useNavigate();
@@ -31,9 +32,9 @@ function Article({ elem }) {
     if (presenceOfArguments) {
       setArticle(elem);
     } else {
-      dispatch(fetchArticle({ slug: JSON.parse(localStorage.getItem('idArticle')), id: token }));
+      dispatch(fetchArticle({ slug: id, tokenUser: token }));
     }
-  }, []);
+  }, [presenceOfArguments]);
 
   const { fullArticle, error, status } = useSelector((state) => state.article);
 
