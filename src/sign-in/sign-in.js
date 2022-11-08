@@ -35,7 +35,7 @@ function SignIn() {
   }, [authorization]);
 
   const errorElement = (
-    <div className={style['sign-in__error-message']}>
+    <div className={style['form__error-message']}>
       <Alert message="Error" description="Something went wrong, it's impossible to log in :(" type="error" showIcon />
     </div>
   );
@@ -68,7 +68,7 @@ function SignIn() {
               pattern: /^[a-z0-9._%+-]+@[a-z0-9-]+.+.[a-z]{2,4}$/g,
             })}
           />
-          <div className={style.form__error}>{errors.email ? <p>Некорректный адрес электронной почты</p> : null}</div>
+          <div className={style.form__error}>{errors.email ? <p>Invalid email address</p> : null}</div>
           <label htmlFor="password">Password</label>
           <input
             id="password"
@@ -78,7 +78,7 @@ function SignIn() {
               [style['form__input--error']]: errors.password || Object.keys(errorMessage).length,
             })}
             {...register('password', {
-              required: 'Поле не должно быть пустым',
+              required: 'The field should not be empty',
             })}
           />
           <div className={style.form__error}>

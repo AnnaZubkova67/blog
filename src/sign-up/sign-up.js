@@ -39,7 +39,7 @@ function SignUp() {
   }, [authorization]);
 
   const errorElement = (
-    <div className={style['sign-up__error-message']}>
+    <div className={style['form__error-message']}>
       <Alert
         message="Error"
         description="Something went wrong, it is impossible to create a new account :("
@@ -76,11 +76,11 @@ function SignUp() {
               required: true,
               minLength: {
                 value: 3,
-                message: 'Не менее 3-х символов',
+                message: 'Your username must consist of at least 3 characters',
               },
               maxLength: {
                 value: 20,
-                message: 'Не более 20 символов',
+                message: 'Your username must consist of no more than 20 characters',
               },
             })}
           />
@@ -101,7 +101,7 @@ function SignUp() {
             })}
           />
           <div className={style.form__error}>
-            {errors.email ? <p>Некорректный адрес электронной почты</p> : null}
+            {errors.email ? <p>Invalid email address</p> : null}
             {errorMessage.email ? <p>Email is already busy</p> : null}
           </div>
           <label htmlFor="password">Password</label>
@@ -114,11 +114,11 @@ function SignUp() {
               required: true,
               minLength: {
                 value: 6,
-                message: 'Не менее 6 символов',
+                message: 'Your password needs to be at least 6 characters',
               },
               maxLength: {
                 value: 40,
-                message: 'Не более 40 символов',
+                message: 'Your password must consist of no more than 40 characters',
               },
             })}
           />

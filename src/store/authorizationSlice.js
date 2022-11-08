@@ -131,10 +131,12 @@ const authorizationSlice = createSlice({
     logOut: (state) => {
       localStorage.clear();
       state.authorization = false;
-      state.email = '';
+      state.user = {};
       state.token = '';
-      state.username = '';
-      state.image = '';
+    },
+    errorReset: (state) => {
+      state.error = false;
+      state.errorMessage = {};
     },
   },
   extraReducers: {
@@ -153,6 +155,6 @@ const authorizationSlice = createSlice({
   },
 });
 
-export const { logOut } = authorizationSlice.actions;
+export const { logOut, errorReset } = authorizationSlice.actions;
 
 export default authorizationSlice.reducer;

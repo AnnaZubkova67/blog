@@ -22,6 +22,7 @@ function Article({ elem }) {
   const navigation = useNavigate();
   const { token, authorization, user } = useSelector((state) => state.authorization);
   const { idArticle } = useSelector((state) => state.articleList);
+
   const [article, setArticle] = useState({});
   const [mark, setMark] = useState(article.favorited);
   const [deleted, setDeleted] = useState(false);

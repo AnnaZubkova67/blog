@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Popconfirm } from 'antd';
 
-import { logOut } from '../store/authorizationSlice';
+import { logOut, errorReset } from '../store/authorizationSlice';
 import { createArticle, clearingThePreviousArticle } from '../store/articleSlice';
 import { fetchArticleList } from '../store/articleListSlice';
 
@@ -26,10 +26,10 @@ function Header() {
 
   const notAuthorized = (
     <div className={styles.header__authorization}>
-      <NavLink to="/sign-in" className={setActive}>
+      <NavLink to="/sign-in" className={setActive} onClick={() => dispatch(errorReset())}>
         Sign In
       </NavLink>
-      <NavLink to="/sign-up" className={setActive}>
+      <NavLink to="/sign-up" className={setActive} onClick={() => dispatch(errorReset())}>
         Sign Up
       </NavLink>
     </div>

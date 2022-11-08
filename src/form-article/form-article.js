@@ -4,22 +4,25 @@ import classnames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, Alert } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { postArticle, putEditArticle, addTag, deleteTag } from '../store/articleSlice';
+import { postArticle, putEditArticle, addTag, deleteTag, fetchArticle } from '../store/articleSlice';
 
-import style from './create-article.module.scss';
+import style from './form-article.module.scss';
 
-function CreateArticle() {
+function FormArticle() {
   const dispatch = useDispatch();
   const navigation = useNavigate();
-  const { authorization, token } = useSelector((state) => state.authorization);
+  const { authorization, token, status: statusAuthorization } = useSelector((state) => state.authorization);
+  const { id } = useParams();
 
   useEffect(() => {
     if (!authorization) {
       navigation('/sign-in');
+    } else if (id) {
+      dispatch(fetchArticle({ tokenUser: token, slug: id }));
     }
-  }, [authorization]);
+  }, [authorization, id]);
 
   const {
     register,
@@ -58,6 +61,12 @@ function CreateArticle() {
   const { fullArticle } = useSelector((state) => state.article);
   const activeCreate = JSON.parse(localStorage.getItem('activeCreate'));
 
+  useEffect(() => {
+    if (!id && !Object.keys(fullArticle).length) {
+      reset();
+    }
+  }, [id, fullArticle]);
+
   const antIcon = (
     <LoadingOutlined
       style={{
@@ -69,107 +78,110 @@ function CreateArticle() {
   );
 
   const creationSuccess = (
-    <Alert message="The article was successfully added" type="success" className={style['create-article__alert']} />
+    <Alert message="The article was successfully added" type="success" className={style['form-article__alert']} />
   );
   const editSuccess = (
     <Alert
       message="The article has been successfully modified"
       type="success"
-      className={style['create-article__alert']}
+      className={style['form-article__alert']}
     />
   );
 
   const errorElement = (
-    <div className={style['create-article__alert']}>
+    <div className={style['form-article__alert']}>
       <Alert message="Error" description="Something went wrong, try again :(" type="error" showIcon />
     </div>
   );
-  const content = (
-    <div className={style['create-article']}>
-      <title className={style['create-article__title']}>{activeCreate ? 'Create new article' : 'Edit article'}</title>
-      <form onSubmit={handleSubmit(onSubmit)} className={style['create-article__form']}>
+
+  const spinElement = (
+    <Spin
+      spinning={statusAuthorization === 'loading'}
+      delay={500}
+      size="large"
+      className={style['form-article__spin']}
+    />
+  );
+  const contentElement = (
+    <div className={style['form-article']}>
+      <title className={style['form-article__title']}>{activeCreate ? 'Create new article' : 'Edit article'}</title>
+      <form onSubmit={handleSubmit(onSubmit)} className={style['form-article__form']}>
         <label htmlFor="title">Title</label>
         <input
           id="title"
           type="text"
           placeholder="Title"
-          value={activeCreate ? '' : fullArticle.title}
-          className={classnames(style['create-article__input'], {
-            [style['create-article__input--error']]: errors.title,
+          defaultValue={!id ? '' : fullArticle.title}
+          className={classnames(style['form-article__input'], {
+            [style['form-article__input--error']]: errors.title,
           })}
           {...register('title', {
-            required: 'Поле не должно быть пустым',
+            required: 'The field should not be empty',
           })}
         />
-        <div className={style['create-article__error']}>{errors.title ? <p>{errors.title.message}</p> : null}</div>
+        <div className={style['form-article__error']}>{errors.title ? <p>{errors.title.message}</p> : null}</div>
         <label htmlFor="short-description">Short description</label>
         <input
           id="short-description"
           type="text"
           placeholder="Short description"
-          value={activeCreate ? '' : fullArticle.description}
-          className={classnames(style['create-article__input'], {
-            [style['create-article__input--error']]: errors.description,
+          defaultValue={!id ? '' : fullArticle.description}
+          className={classnames(style['form-article__input'], {
+            [style['form-article__input--error']]: errors.description,
           })}
           {...register('description', {
-            required: 'Поле не должно быть пустым',
+            required: 'The field should not be empty',
           })}
         />
-        <div className={style['create-article__error']}>
-          {errors.description ? <p>Поле не должно быть пустым</p> : null}
+        <div className={style['form-article__error']}>
+          {errors.description ? <p>The field should not be empty</p> : null}
         </div>
         <label htmlFor="text">Text</label>
         <textarea
           id="text"
           placeholder="Text"
           rows="10"
-          value={activeCreate ? '' : fullArticle.body}
-          className={classnames(style['create-article__input'], {
-            [style['create-article__input--error']]: errors.text,
+          defaultValue={!id ? '' : fullArticle.body}
+          className={classnames(style['form-article__input'], {
+            [style['form-article__input--error']]: errors.text,
           })}
           {...register('body', {
-            required: 'Поле не должно быть пустым',
+            required: 'The field should not be empty',
           })}
         />
-        <div className={style['create-article__error']}>{errors.text ? <p>{errors.text.message}</p> : null}</div>
+        <div className={style['form-article__error']}>{errors.text ? <p>{errors.text.message}</p> : null}</div>
         <div>Tags</div>
         {tagList.map((elem) => (
-          <div className={style['create-article__tags']} key={Math.random()}>
-            <input
-              id="tags"
-              placeholder="Tag"
-              type="text"
-              className={style['create-article__tag']}
-              defaultValue={elem}
-            />
+          <div className={style['form-article__tags']} key={Math.random()}>
+            <input id="tags" placeholder="Tag" type="text" className={style['form-article__tag']} defaultValue={elem} />
             <button
               type="button"
-              className={style['create-article__delete-tag']}
+              className={style['form-article__delete-tag']}
               onClick={() => dispatch(deleteTag({ tag: elem }))}
             >
               Delete
             </button>
           </div>
         ))}
-        <label htmlFor="tags" className={style['create-article__tags']}>
+        <label htmlFor="tags" className={style['form-article__tags']}>
           <input
             id="tags"
             placeholder="Tag"
             type="text"
-            className={style['create-article__tag']}
+            className={style['form-article__tag']}
             value={tagName}
             onChange={(e) => setTagName(e.target.value)}
           />
-          <button type="button" className={style['create-article__delete-tag']} onClick={() => setTagName('')}>
+          <button type="button" className={style['form-article__delete-tag']} onClick={() => setTagName('')}>
             Delete
           </button>
-          <button type="button" className={style['create-article__add-tag']} onClick={clickAddTag}>
+          <button type="button" className={style['form-article__add-tag']} onClick={clickAddTag}>
             Add tag
           </button>
         </label>
         <button
           type="submit"
-          className={style['create-article__send']}
+          className={style['form-article__send']}
           disabled={status === 'loading'}
           onClick={() => window.scroll(0, 0)}
         >
@@ -183,9 +195,10 @@ function CreateArticle() {
       {create && !error ? creationSuccess : null}
       {edit && !error ? editSuccess : null}
       {error ? errorElement : null}
-      {content}
+      {statusAuthorization === 'loading' ? spinElement : null}
+      {contentElement}
     </>
   );
 }
 
-export default CreateArticle;
+export default FormArticle;

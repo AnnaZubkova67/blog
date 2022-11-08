@@ -1,4 +1,4 @@
-.create-article{
+.form-article{
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -119,6 +119,12 @@
   &__add-tag {
     color: #1890FF;
     border-color: #1890FF;
+
+    &__spin{
+      position: absolute !important;
+      left: 50% !important;
+      top: 30% !important;
+    }
   }
 
 }

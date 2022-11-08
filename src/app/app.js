@@ -8,7 +8,7 @@ import ListArticles from '../list-articles/list-articles';
 import SignUp from '../sign-up/sign-up';
 import SignIn from '../sign-in/sign-in';
 import EditProfile from '../edit-profile/edit-profile';
-import CreateArticle from '../create-article/create-article';
+import FormArticle from '../form-article/form-article';
 import NetworkState from '../network-state/network-state';
 import { getUser } from '../store/authorizationSlice';
 import Article from '../article/article';
@@ -52,11 +52,8 @@ function App() {
             <Route path="/sign-up" element={<SignUp />} />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/profile" element={<EditProfile />} />
-            <Route path="/new-article" element={<CreateArticle />} />
-            <Route
-              path={`/articles/${JSON.parse(localStorage.getItem('idArticle'))}/edit`}
-              element={<CreateArticle />}
-            />
+            <Route path="/new-article" element={<FormArticle />} />
+            <Route path="/articles/:id/edit" element={<FormArticle />} />
             <Route path="/" element={<ListArticles />} />
           </Routes>
         </div>

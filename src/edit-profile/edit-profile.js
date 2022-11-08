@@ -69,14 +69,14 @@ function EditProfile() {
               [style['form__input--error']]: errors.username || errorMessage.username,
             })}
             {...register('username', {
-              required: 'Поле не должно быть пустым',
+              required: 'The field should not be empty',
               minLength: {
                 value: 3,
-                message: 'Не менее 3-х символов',
+                message: 'Your username must consist of at least 3 characters',
               },
               maxLength: {
                 value: 20,
-                message: 'Не более 20 символов',
+                message: 'Your username must consist of no more than 20 characters',
               },
             })}
           />
@@ -98,7 +98,7 @@ function EditProfile() {
             })}
           />
           <div className={style.form__error}>
-            {errors.email ? <p>Некорректный адрес электронной почты</p> : null}
+            {errors.email ? <p>Invalid email address</p> : null}
             {errorMessage.email ? <p>Email is already busy</p> : null}
           </div>
           <label htmlFor="password">New password</label>
@@ -112,11 +112,11 @@ function EditProfile() {
             {...register('password', {
               minLength: {
                 value: 6,
-                message: 'Не менее 6 символов',
+                message: 'Your password needs to be at least 6 characters',
               },
               maxLength: {
                 value: 40,
-                message: 'Не более 40 символов',
+                message: 'Your password must consist of no more than 40 characters',
               },
             })}
           />
@@ -134,7 +134,7 @@ function EditProfile() {
               pattern: /[-a-zA-Z0-9@:%_+.~#?&\/=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&\/=]*)?/gi,
             })}
           />
-          <div className={style.form__error}>{errors.image ? <p>Некорректный URL</p> : null}</div>
+          <div className={style.form__error}>{errors.image ? <p>Incorrect URL</p> : null}</div>
           <button type="submit" className={style.form__submit} disabled={status === 'loading'}>
             {status === 'loading' ? <Spin indicator={antIcon} /> : 'Save'}
           </button>
