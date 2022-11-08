@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { Pagination, Alert, Spin } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchArticleList, setPagination } from '../store/articleListSlice';
+import { fetchArticleList } from '../store/articleListSlice';
+import { setPagination } from '../store/authorizationSlice';
 import Article from '../article/article';
 
 import styles from './lest-articles.module.scss';
@@ -10,7 +11,8 @@ import 'antd/dist/antd.css';
 
 function ListArticles() {
   const dispatch = useDispatch();
-  const { articleList, articlesCount, pagination, error, status } = useSelector((state) => state.articleList);
+  const { articleList, articlesCount, error, status } = useSelector((state) => state.articleList);
+  const { pagination } = useSelector((state) => state.authorization);
 
   useEffect(() => {
     dispatch(fetchArticleList(pagination));

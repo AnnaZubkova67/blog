@@ -29,18 +29,12 @@ const articleListSlice = createSlice({
     status: 'resolved',
     error: false,
     idArticle: '',
-    pagination: 1,
     articleList: [],
     articlesCount: 0,
   },
   reducers: {
     gettingID: (state, action) => {
-      localStorage.setItem('idArticle', JSON.stringify(action.payload.id));
       state.idArticle = action.payload.id;
-    },
-
-    setPagination: (state, action) => {
-      state.pagination = action.payload.index;
     },
   },
   extraReducers: {
@@ -62,6 +56,6 @@ const articleListSlice = createSlice({
   },
 });
 
-export const { gettingID, setPagination } = articleListSlice.actions;
+export const { gettingID } = articleListSlice.actions;
 
 export default articleListSlice.reducer;

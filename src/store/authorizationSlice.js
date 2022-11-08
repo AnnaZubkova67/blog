@@ -118,6 +118,7 @@ const authorizationSlice = createSlice({
     status: 'resolved',
     error: false,
     errorMessage: {},
+    pagination: 1,
     user: {},
     authorization: false,
     token: '',
@@ -128,10 +129,14 @@ const authorizationSlice = createSlice({
       state.authorization = false;
       state.user = {};
       state.token = '';
+      state.pagination = 1;
     },
     errorReset: (state) => {
       state.error = false;
       state.errorMessage = {};
+    },
+    setPagination: (state, action) => {
+      state.pagination = action.payload.index;
     },
   },
   extraReducers: {
@@ -150,6 +155,6 @@ const authorizationSlice = createSlice({
   },
 });
 
-export const { logOut, errorReset } = authorizationSlice.actions;
+export const { logOut, errorReset, setPagination } = authorizationSlice.actions;
 
 export default authorizationSlice.reducer;
