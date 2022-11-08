@@ -60,7 +60,6 @@ function FormArticle() {
   };
 
   const { fullArticle } = useSelector((state) => state.article);
-  const activeCreate = JSON.parse(localStorage.getItem('activeCreate'));
 
   useEffect(() => {
     if (!id && !Object.keys(fullArticle).length) {
@@ -105,7 +104,7 @@ function FormArticle() {
   );
   const contentElement = (
     <div className={style['form-article']}>
-      <title className={style['form-article__title']}>{activeCreate ? 'Create new article' : 'Edit article'}</title>
+      <title className={style['form-article__title']}>{!id ? 'Create new article' : 'Edit article'}</title>
       <form onSubmit={handleSubmit(onSubmit)} className={style['form-article__form']}>
         <label htmlFor="title">Title</label>
         <input
