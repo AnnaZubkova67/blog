@@ -39,7 +39,7 @@
 
   &__text,
   &__authorization &__log-out,
-  &__button--active{
+  &__button--active {
     display: inline-block;
     margin-right: 30px;
     font-style: normal;
@@ -55,7 +55,7 @@
     }
   }
 
-  &__authorization &__log-out{
+  &__authorization &__log-out {
     border: 1px solid rgba(0, 0, 0, 0.75);
     border-radius: 5px;
     margin-right: 22px;
@@ -83,17 +83,16 @@
     }
   }
 
-   &__button--active,
-   &__text:hover,
-   &__authorization &__log-out:hover{
+  &__button--active,
+  &__text:hover,
+  &__authorization &__log-out:hover {
     border-radius: 5px;
     border: 1px solid #52C41A;
     color: #52C41A !important;
 
-     @media (max-width: 640px) {
-       border: none;
-       font-weight: 700;
-     }
-
+    @media (max-width: 640px) {
+      border: none;
+      font-weight: 700;
+    }
   }
 }

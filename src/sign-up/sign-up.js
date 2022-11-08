@@ -61,7 +61,7 @@ function SignUp() {
 
   return (
     <>
-      {error ? errorElement : null}
+      {error && !Object.keys(errorMessage).length ? errorElement : null}
       <div className={style.form}>
         <title className={style.form__title}>Create new account</title>
         <form onSubmit={handleSubmit(onSubmit)} className={style.form__shape}>
@@ -73,7 +73,7 @@ function SignUp() {
               [style['form__input--error']]: errors.username || errorMessage.username,
             })}
             {...register('username', {
-              required: true,
+              required: 'The field should not be empty',
               minLength: {
                 value: 3,
                 message: 'Your username must consist of at least 3 characters',
@@ -107,11 +107,11 @@ function SignUp() {
           <label htmlFor="password">Password</label>
           <input
             id="password"
-            type="new-password"
+            type="password"
             placeholder="Password"
             className={classnames(style.form__input, { [style['form__input--error']]: errors.password })}
             {...register('password', {
-              required: true,
+              required: 'The field should not be empty',
               minLength: {
                 value: 6,
                 message: 'Your password needs to be at least 6 characters',
@@ -126,17 +126,15 @@ function SignUp() {
           <label htmlFor="repeat">Repeat password</label>
           <input
             id="repeat"
-            type="new-password"
+            type="password"
             placeholder="Repeat password"
             className={classnames(style.form__input, { [style['form__input--error']]: errors.repeatPassword })}
             {...register('repeatPassword', {
-              required: true,
+              required: 'The field should not be empty',
               validate: (value) => value === watchPassword,
             })}
           />
-          <div className={style.form__error}>
-            {errors.repeatPassword ? <p>{errors.repeatPassword.message}</p> : null}
-          </div>
+          <div className={style.form__error}>{errors.repeatPassword ? <p>Passwords must match</p> : null}</div>
           <input
             id="information"
             type="checkbox"
@@ -150,11 +148,10 @@ function SignUp() {
           <button type="submit" className={style.form__submit} disabled={!isValid}>
             {status === 'loading' ? <Spin indicator={antIcon} /> : 'Create'}
           </button>
+          <p className={style['form__sign-in']}>
+            Already have an account? <Link to="/sign-in">Sign In</Link>.
+          </p>
         </form>
-
-        <p className={style['form__sign-in']}>
-          Already have an account? <Link to="/sign-in">Sign In</Link>.
-        </p>
       </div>
     </>
   );

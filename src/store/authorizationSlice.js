@@ -97,14 +97,9 @@ const setPending = (state) => {
 
 const setFulfilled = (state, action) => {
   state.status = 'resolved';
-  state.email = action.payload.user.email;
   state.user = action.payload.user;
   state.token = action.payload.user.token;
   localStorage.setItem('token', JSON.stringify(action.payload.user.token));
-  state.username = action.payload.user.username;
-  if (action.payload.user.image) {
-    state.image = action.payload.user.image;
-  }
   state.authorization = true;
   state.error = false;
 };

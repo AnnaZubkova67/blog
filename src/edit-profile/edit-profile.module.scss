@@ -1,4 +1,5 @@
 @import "src/sign-up/sign-up.module";
+
 .form {
   min-height: 498px;
   max-width: 384px;
@@ -7,9 +8,8 @@
     margin-top: 15px;
   }
 
-  &__submit{
+  &__submit {
     margin-top: 21px;
   }
-
 
 }

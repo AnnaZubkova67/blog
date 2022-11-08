@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, Alert } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { postArticle, putEditArticle, addTag, deleteTag, fetchArticle } from '../store/articleSlice';
+import { postArticle, putEditArticle, addTag, deleteTag, fetchArticle, createArticle } from '../store/articleSlice';
 
 import style from './form-article.module.scss';
 
@@ -49,6 +49,7 @@ function FormArticle() {
     if (JSON.parse(localStorage.getItem('activeCreate'))) {
       await dispatch(postArticle({ id: token, body: data }));
       reset();
+      dispatch(createArticle({ event: 'create' }));
       setCreate(true);
       setTimeout(() => setCreate(false), 2000);
     } else {

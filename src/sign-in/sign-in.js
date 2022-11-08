@@ -88,11 +88,10 @@ function SignIn() {
           <button type="submit" className={style.form__submit}>
             {status === 'loading' ? <Spin indicator={antIcon} /> : 'Login'}
           </button>
+          <p className={style['form__sign-up']}>
+            Already have an account? <Link to="/sign-up">Sign Up</Link>.
+          </p>
         </form>
-
-        <p className={style['form__sign-up']}>
-          Already have an account? <Link to="/sign-up">Sign Up</Link>.
-        </p>
       </div>
     </>
   );

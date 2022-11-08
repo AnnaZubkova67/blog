@@ -1,19 +1,19 @@
 @import "src/sign-up/sign-up.module";
+
 .form {
   min-height: 0;
   max-height: 374px;
   max-width: 384px;
 
-  &__shape{
+  &__shape {
     display: flex;
     min-height: 0;
     max-height: 340px;
     justify-content: space-evenly;
   }
 
-
   &__sign-up {
     text-align: center;
+    margin-top: 8px;
   }
-
 }

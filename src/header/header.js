@@ -52,7 +52,7 @@ function Header() {
       <NavLink to="/new-article" className={setActive} onClick={() => dispatch(createArticle({ event: 'create' }))}>
         Create article
       </NavLink>
-      <NavLink to="/profile" className={styles.header__user}>
+      <NavLink to="/profile" className={styles.header__user} onClick={() => dispatch(errorReset())}>
         <p className={styles.header__text}>{user.username}</p>
         <img src={user.image ? user.image : userImg} alt="user img" className={styles.header__image} />
       </NavLink>
