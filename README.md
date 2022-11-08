@@ -1,2 +1,2 @@
 # blog
-https://blog-fawn-two-16.vercel.app/articles
+https://blog-fawn-two-16.vercel.app
