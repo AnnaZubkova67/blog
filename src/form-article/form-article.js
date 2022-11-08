@@ -154,7 +154,14 @@ function FormArticle() {
         <div>Tags</div>
         {tagList.map((elem) => (
           <div className={style['form-article__tags']} key={Math.random()}>
-            <input id="tags" placeholder="Tag" type="text" className={style['form-article__tag']} defaultValue={elem} />
+            <input
+              id="tags"
+              placeholder="Tag"
+              type="text"
+              className={style['form-article__tag']}
+              defaultValue={elem}
+              disabled
+            />
             <button
               type="button"
               className={style['form-article__delete-tag']}
