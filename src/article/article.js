@@ -1,33 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import ReactMarkdown from 'react-markdown';
 import { format } from 'date-fns';
 import classnames from 'classnames';
+// import { MarkdownIt } from 'markdown-it'
 import { Alert, Button, Popconfirm, Spin } from 'antd';
 
 import { gettingID } from '../store/articleListSlice';
 import { postLike, deleteLike, fetchArticle, deleteArticle, createArticle } from '../store/articleSlice';
+import style from '../form-article/form-article.module.scss';
 
 import styles from './article.module.scss';
 import noLikeImg from './heart.svg';
 import likeImg from './like.svg';
 
 function Article({ elem }) {
-  // eslint-disable-next-line global-require
-  const MarkdownIt = require('markdown-it');
-  const md = new MarkdownIt();
   const { id } = useParams();
 
   const dispatch = useDispatch();
   const navigation = useNavigate();
   const { token, authorization, user } = useSelector((state) => state.authorization);
-  const { idArticle } = useSelector((state) => state.articleList);
 
   const [article, setArticle] = useState({});
   const [mark, setMark] = useState(article.favorited);
   const [deleted, setDeleted] = useState(false);
+  const [create, setCreate] = useState(false);
   // eslint-disable-next-line prefer-rest-params
   const presenceOfArguments = Object.keys(arguments[0]).length;
+
+  useEffect(() => {
+    if (JSON.parse(localStorage.getItem('activeCreate'))) {
+      dispatch(createArticle({ event: 'create' }));
+      setCreate(true);
+      localStorage.setItem('activeCreate', JSON.stringify(false));
+      setTimeout(() => setCreate(false), 2000);
+    }
+  }, []);
 
   useEffect(() => {
     if (presenceOfArguments) {
@@ -45,12 +54,12 @@ function Article({ elem }) {
     }
   }, [fullArticle]);
 
-  const like = async () => {
+  const like = () => {
     if (!article.favorited) {
-      await dispatch(postLike({ id: token, name: article.slug }));
+      dispatch(postLike({ id: token, name: article.slug }));
       setMark(true);
     } else {
-      await dispatch(deleteLike({ id: token, name: article.slug }));
+      dispatch(deleteLike({ id: token, name: article.slug }));
       setMark(false);
     }
   };
@@ -61,11 +70,9 @@ function Article({ elem }) {
     }
   }, [mark]);
 
-  const clickDelete = async () => {
-    const request = await dispatch(deleteArticle({ id: token, slug: idArticle }));
-    if (request.meta.requestStatus === 'fulfilled') {
-      setDeleted(true);
-    }
+  const clickDelete = () => {
+    dispatch(deleteArticle({ id: token, slug: id }));
+    setDeleted(true);
   };
 
   useEffect(() => {
@@ -73,7 +80,7 @@ function Article({ elem }) {
       setTimeout(() => {
         setDeleted(false);
         navigation('/articles');
-      }, 2000);
+      }, 1000);
     }
   }, [deleted]);
 
@@ -93,7 +100,7 @@ function Article({ elem }) {
     <div className={styles.article__buttons}>
       {deleteButton}
       <NavLink
-        to={`/articles/${idArticle}/edit`}
+        to={`/articles/${id}/edit`}
         className={styles['article__button-edit']}
         onClick={() => dispatch(createArticle({ event: 'edit' }))}
       >
@@ -102,70 +109,76 @@ function Article({ elem }) {
     </div>
   );
 
+  const creationSuccess = (
+    <Alert message="The article was successfully added" type="success" className={style['form-article__alert']} />
+  );
+
   // eslint-disable-next-line consistent-return
   const articleContent = () => {
     if (Object.keys(article).length && article && !deleted) {
       return (
-        <li
-          className={classnames(styles.article, {
-            [styles['article__my-article']]: user.username === article.author.username,
-            [styles['article__preview-article']]: presenceOfArguments,
-          })}
-        >
-          <div className={styles.article__description}>
-            <div className={styles.article__title}>
-              <Link
-                to={`/article/${article.slug}`}
-                className={styles.article__title}
-                onClick={() => dispatch(gettingID({ id: article.slug }))}
-              >
-                {article.title}
-              </Link>
-              <Popconfirm
-                title="Log in to mark the article as liked"
-                disabled={authorization}
-                onConfirm={() => navigation('/sign-in')}
-              >
-                <button
-                  type="button"
-                  disabled={status !== 'resolved'}
-                  className={styles.article__like}
-                  onClick={authorization ? like : null}
-                  onKeyDown={authorization ? like : null}
-                >
-                  <img src={article.favorited ? likeImg : noLikeImg} alt="like" />
-                  {article.favoritesCount}
-                </button>
-              </Popconfirm>
-            </div>
-            <ul className={styles.article__tags}>
-              {article.tagList.map((value) => (
-                <button type="button" className={styles.article__tag} key={Math.random()}>
-                  {value}
-                </button>
-              ))}
-            </ul>
-            <p className={styles.article__text}>{article.description}</p>
-            {!presenceOfArguments ? (
-              // eslint-disable-next-line react/no-danger
-              <p className={styles.article__body} dangerouslySetInnerHTML={{ __html: md.render(article.body) }} />
-            ) : null}
-          </div>
-          <div
-            className={classnames(styles.article__profile, {
-              [styles['article__full-article-profile']]: !presenceOfArguments,
+        <>
+          {create ? creationSuccess : null}
+          <li
+            className={classnames(styles.article, {
+              [styles['article__my-article']]: user.username === article.author.username,
+              [styles['article__preview-article']]: presenceOfArguments,
             })}
           >
-            <div className={styles.article__info}>
-              <div>
-                <p className={styles['article__user-name']}>{article.author.username}</p>
-                <p className={styles.article__date}>{format(new Date(article.createdAt), 'MMMM d, y')}</p>
+            <div className={styles.article__description}>
+              <div className={styles.article__title}>
+                <Link
+                  to={`/articles/${article.slug}`}
+                  className={styles.article__title}
+                  onClick={() => dispatch(gettingID({ id: article.slug }))}
+                >
+                  {article.title}
+                </Link>
+                <Popconfirm
+                  title="Log in to mark the article as liked"
+                  disabled={authorization}
+                  onConfirm={() => navigation('/sign-in')}
+                >
+                  <button
+                    type="button"
+                    disabled={status !== 'resolved'}
+                    className={styles.article__like}
+                    onClick={authorization ? like : null}
+                    onKeyDown={authorization ? like : null}
+                  >
+                    <img src={article.favorited ? likeImg : noLikeImg} alt="like" />
+                    {article.favoritesCount}
+                  </button>
+                </Popconfirm>
               </div>
-              <img src={article.author.image} alt="user img" className={styles['article__user-img']} />
+              <ul className={styles.article__tags}>
+                {article.tagList.map((value) => (
+                  <button type="button" className={styles.article__tag} key={Math.random()}>
+                    {value}
+                  </button>
+                ))}
+              </ul>
+              <p className={styles.article__text}>{article.description}</p>
+              {!presenceOfArguments ? (
+                <ReactMarkdown className={styles.article__body}>{article.body}</ReactMarkdown>
+              ) : null}
             </div>
-            {user.username === article.author.username && !presenceOfArguments ? control : null}
-          </div>
-        </li>
+            <div
+              className={classnames(styles.article__profile, {
+                [styles['article__full-article-profile']]: !presenceOfArguments,
+              })}
+            >
+              <div className={styles.article__info}>
+                <div>
+                  <p className={styles['article__user-name']}>{article.author.username}</p>
+                  <p className={styles.article__date}>{format(new Date(article.createdAt), 'MMMM d, y')}</p>
+                </div>
+                <img src={article.author.image} alt="user img" className={styles['article__user-img']} />
+              </div>
+              {user.username === article.author.username && !presenceOfArguments ? control : null}
+            </div>
+          </li>
+        </>
       );
     }
     if (error) {

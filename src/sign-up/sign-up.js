@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import classnames from 'classnames';
 import { Link, useNavigate } from 'react-router-dom';
@@ -27,10 +27,12 @@ function SignUp() {
 
   const onSubmit = (data) => {
     delete data.repeatPassword;
+    delete data.checkbox;
     dispatch(postSignUp(data));
   };
 
   const { authorization, errorMessage, error, status } = useSelector((state) => state.authorization);
+  const [checkbox, setCheckbox] = useState(false);
 
   useEffect(() => {
     if (authorization) {
@@ -138,14 +140,20 @@ function SignUp() {
           <input
             id="information"
             type="checkbox"
-            {...register('repeatPassword', {
+            {...register('checkbox', {
               required: true,
+              pattern: /true/g,
             })}
+            onClick={() => setCheckbox(!checkbox)}
           />
           <label htmlFor="information" className={style.form__information}>
             I agree to the processing of my personal information
           </label>
-          <button type="submit" className={style.form__submit} disabled={!isValid}>
+          <button
+            type="submit"
+            className={style.form__submit}
+            disabled={(!checkbox && !isValid) || status === 'loading'}
+          >
             {status === 'loading' ? <Spin indicator={antIcon} /> : 'Create'}
           </button>
           <p className={style['form__sign-in']}>

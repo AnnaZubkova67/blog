@@ -181,7 +181,10 @@ const articleSlice = createSlice({
       state.status = action.payload;
     },
     [postArticle.pending]: setPending,
-    [postArticle.fulfilled]: setFulfilled,
+    [postArticle.fulfilled]: (state, action) => {
+      setFulfilled(state, action);
+      state.fullArticle = action.payload.article;
+    },
     [postArticle.rejected]: setRejected,
     [putEditArticle.pending]: setPending,
     [putEditArticle.fulfilled]: setFulfilled,

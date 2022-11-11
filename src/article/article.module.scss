@@ -88,9 +88,9 @@
 
   }
 
-  &__body img {
-    width: 100px;
-    height: 100px;
+  &__body p img {
+    width: 100px !important;
+    height: 100px !important;
   }
 
   &__button-delete,

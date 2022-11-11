@@ -6,14 +6,14 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, Alert } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { postArticle, putEditArticle, addTag, deleteTag, fetchArticle, createArticle } from '../store/articleSlice';
+import { postArticle, putEditArticle, addTag, deleteTag, fetchArticle } from '../store/articleSlice';
 
 import style from './form-article.module.scss';
 
 function FormArticle() {
   const dispatch = useDispatch();
   const navigation = useNavigate();
-  const { authorization, token, status: statusAuthorization } = useSelector((state) => state.authorization);
+  const { authorization, token, status: statusAuthorization, user } = useSelector((state) => state.authorization);
   const { id } = useParams();
 
   useEffect(() => {
@@ -34,9 +34,7 @@ function FormArticle() {
   });
 
   const { tagList, status, error } = useSelector((state) => state.article);
-  const { idArticle } = useSelector((state) => state.articleList);
   const [tagName, setTagName] = useState('');
-  const [create, setCreate] = useState(false);
   const [edit, setEdit] = useState(false);
 
   const clickAddTag = () => {
@@ -44,16 +42,13 @@ function FormArticle() {
     setTagName('');
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = (data) => {
     data.tagList = tagList;
     if (JSON.parse(localStorage.getItem('activeCreate'))) {
-      await dispatch(postArticle({ id: token, body: data }));
+      dispatch(postArticle({ id: token, body: data }));
       reset();
-      dispatch(createArticle({ event: 'create' }));
-      setCreate(true);
-      setTimeout(() => setCreate(false), 2000);
     } else {
-      await dispatch(putEditArticle({ id: token, body: data, slug: idArticle }));
+      dispatch(putEditArticle({ id: token, body: data, slug: id }));
       setEdit(true);
       setTimeout(() => setEdit(false), 2000);
     }
@@ -62,8 +57,20 @@ function FormArticle() {
   const { fullArticle } = useSelector((state) => state.article);
 
   useEffect(() => {
+    if (Object.keys(fullArticle).length && fullArticle.author.username !== user.username) {
+      navigation(`/articles/${id}`);
+    }
+  }, [fullArticle, user]);
+
+  useEffect(() => {
     if (!id && !Object.keys(fullArticle).length) {
       reset();
+    }
+  }, [id, fullArticle]);
+
+  useEffect(() => {
+    if (!id && Object.keys(fullArticle).length) {
+      navigation(`/articles/${fullArticle.slug}`);
     }
   }, [id, fullArticle]);
 
@@ -77,9 +84,6 @@ function FormArticle() {
     />
   );
 
-  const creationSuccess = (
-    <Alert message="The article was successfully added" type="success" className={style['form-article__alert']} />
-  );
   const editSuccess = (
     <Alert
       message="The article has been successfully modified"
@@ -111,7 +115,7 @@ function FormArticle() {
           id="title"
           type="text"
           placeholder="Title"
-          defaultValue={!id ? '' : fullArticle.title}
+          defaultValue={!id && fullArticle ? '' : fullArticle.title}
           className={classnames(style['form-article__input'], {
             [style['form-article__input--error']]: errors.title,
           })}
@@ -199,7 +203,6 @@ function FormArticle() {
   );
   return (
     <>
-      {create && !error ? creationSuccess : null}
       {edit && !error ? editSuccess : null}
       {error ? errorElement : null}
       {statusAuthorization === 'loading' ? spinElement : null}

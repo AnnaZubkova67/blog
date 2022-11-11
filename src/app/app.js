@@ -48,7 +48,7 @@ function App() {
         <div className={styles.content}>
           <Routes>
             <Route path="/articles" element={<ListArticles />} />
-            <Route path="/article/:id" element={<Article />} />
+            <Route path="/articles/:id" element={<Article />} />
             <Route path="/sign-up" element={<SignUp />} />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/profile" element={<EditProfile />} />

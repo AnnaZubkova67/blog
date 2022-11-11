@@ -12,7 +12,7 @@ import style from './edit-profile.module.scss';
 
 function EditProfile() {
   const navigation = useNavigate();
-  const { authorization, user, status } = useSelector((state) => state.authorization);
+  const { authorization, user, status, error } = useSelector((state) => state.authorization);
 
   useEffect(() => {
     if (!authorization) {
@@ -53,10 +53,12 @@ function EditProfile() {
   );
 
   const editSuccess = <Alert message="Profile changed successfully" type="success" className={style.form__alert} />;
+  const editError = <Alert message="Failed to change profile" type="error" className={style.form__alert} />;
 
   return (
     <>
-      {edit ? editSuccess : null}
+      {edit && !error ? editSuccess : null}
+      {error ? editError : null}
       <div className={style.form}>
         <title className={style.form__title}>Edit Profile</title>
         <form onSubmit={handleSubmit(onSubmit)} className={style.form__shape}>

@@ -85,7 +85,7 @@ function SignIn() {
             {errors.password ? <p>{errors.password.message}</p> : null}
             {Object.keys(errorMessage).length ? <p>Invalid email address or password</p> : null}
           </div>
-          <button type="submit" className={style.form__submit}>
+          <button type="submit" className={style.form__submit} disabled={status === 'loading'}>
             {status === 'loading' ? <Spin indicator={antIcon} /> : 'Login'}
           </button>
           <p className={style['form__sign-up']}>

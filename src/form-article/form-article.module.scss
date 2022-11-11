@@ -126,5 +126,10 @@
       top: 30% !important;
     }
   }
+  & button:disabled {
+    background-color: #23639b;
+    color: #818181;
+
+  }
 
 }
