@@ -8,16 +8,16 @@ import FormArticle from '../form-article/form-article';
 function EditArticlePage() {
   const dispatch = useDispatch();
   const navigation = useNavigate();
-  const { authorization, token, user } = useSelector((state) => state.authorization);
+  const { token, user } = useSelector((state) => state.authorization);
   const { id } = useParams();
 
   useEffect(() => {
-    if (!authorization) {
+    if (!JSON.parse(localStorage.getItem('authorization'))) {
       navigation('/sign-in');
     } else if (id) {
       dispatch(fetchArticle({ tokenUser: token, slug: id }));
     }
-  }, [authorization, id]);
+  }, [id]);
 
   const { fullArticle } = useSelector((state) => state.article);
 

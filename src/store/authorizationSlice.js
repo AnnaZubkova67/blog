@@ -100,6 +100,7 @@ const setFulfilled = (state, action) => {
   state.user = action.payload.user;
   state.token = action.payload.user.token;
   localStorage.setItem('token', JSON.stringify(action.payload.user.token));
+  localStorage.setItem('authorization', JSON.stringify(true));
   state.authorization = true;
   state.error = false;
 };
@@ -126,6 +127,7 @@ const authorizationSlice = createSlice({
   reducers: {
     logOut: (state) => {
       localStorage.clear();
+      localStorage.setItem('authorization', JSON.stringify(false));
       state.authorization = false;
       state.user = {};
       state.token = '';
