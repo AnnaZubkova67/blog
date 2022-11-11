@@ -22,7 +22,7 @@ function EditArticlePage() {
   const { fullArticle } = useSelector((state) => state.article);
 
   useEffect(() => {
-    if (Object.keys(fullArticle).length && fullArticle.author.username !== user.username) {
+    if (Object.keys(fullArticle).length && Object.keys(user).length && fullArticle.author.username !== user.username) {
       navigation(`/articles/${id}`);
     }
   }, [fullArticle, user]);
