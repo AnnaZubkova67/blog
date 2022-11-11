@@ -54,12 +54,12 @@ function Article({ elem }) {
     }
   }, [fullArticle]);
 
-  const like = () => {
+  const like = async () => {
     if (!article.favorited) {
-      dispatch(postLike({ id: token, name: article.slug }));
+      await dispatch(postLike({ id: token, name: article.slug }));
       setMark(true);
     } else {
-      dispatch(deleteLike({ id: token, name: article.slug }));
+      await dispatch(deleteLike({ id: token, name: article.slug }));
       setMark(false);
     }
   };
