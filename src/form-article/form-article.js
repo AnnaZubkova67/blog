@@ -6,23 +6,15 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, Alert } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { postArticle, putEditArticle, addTag, deleteTag, fetchArticle } from '../store/articleSlice';
+import { postArticle, putEditArticle, addTag, deleteTag } from '../store/articleSlice';
 
 import style from './form-article.module.scss';
 
-function FormArticle() {
+function FormArticle({ content }) {
   const dispatch = useDispatch();
+  const { token, status: statusAuthorization } = useSelector((state) => state.authorization);
   const navigation = useNavigate();
-  const { authorization, token, status: statusAuthorization, user } = useSelector((state) => state.authorization);
   const { id } = useParams();
-
-  useEffect(() => {
-    if (!authorization) {
-      navigation('/sign-in');
-    } else if (id) {
-      dispatch(fetchArticle({ tokenUser: token, slug: id }));
-    }
-  }, [authorization, id]);
 
   const {
     register,
@@ -31,11 +23,13 @@ function FormArticle() {
     reset,
   } = useForm({
     mode: 'onBlur',
+    defaultValues: content,
   });
 
   const { tagList, status, error } = useSelector((state) => state.article);
   const [tagName, setTagName] = useState('');
   const [edit, setEdit] = useState(false);
+  const { fullArticle } = useSelector((state) => state.article);
 
   const clickAddTag = () => {
     dispatch(addTag({ name: tagName }));
@@ -53,20 +47,6 @@ function FormArticle() {
       setTimeout(() => setEdit(false), 2000);
     }
   };
-
-  const { fullArticle } = useSelector((state) => state.article);
-
-  useEffect(() => {
-    if (Object.keys(fullArticle).length && fullArticle.author.username !== user.username) {
-      navigation(`/articles/${id}`);
-    }
-  }, [fullArticle, user]);
-
-  useEffect(() => {
-    if (!id && !Object.keys(fullArticle).length) {
-      reset();
-    }
-  }, [id, fullArticle]);
 
   useEffect(() => {
     if (!id && Object.keys(fullArticle).length) {
@@ -115,7 +95,7 @@ function FormArticle() {
           id="title"
           type="text"
           placeholder="Title"
-          defaultValue={!id && fullArticle ? '' : fullArticle.title}
+          defaultValue={content.title}
           className={classnames(style['form-article__input'], {
             [style['form-article__input--error']]: errors.title,
           })}
@@ -129,7 +109,7 @@ function FormArticle() {
           id="short-description"
           type="text"
           placeholder="Short description"
-          defaultValue={!id ? '' : fullArticle.description}
+          defaultValue={content.description}
           className={classnames(style['form-article__input'], {
             [style['form-article__input--error']]: errors.description,
           })}
@@ -145,7 +125,7 @@ function FormArticle() {
           id="text"
           placeholder="Text"
           rows="10"
-          defaultValue={!id ? '' : fullArticle.body}
+          defaultValue={content.body}
           className={classnames(style['form-article__input'], {
             [style['form-article__input--error']]: errors.text,
           })}
